@@ -7,7 +7,7 @@ services:
       context: https://github.com/BuggyPasta/BloodPressureTracker.git
       dockerfile: Dockerfile
     ports:
-      - "2025:2025"
+      - "2025:5000"
     volumes:
       - /home/alex/docker_backup/bloodpressuretracker/data:/app/data
       - /home/alex/docker_backup/bloodpressuretracker/config:/app/config

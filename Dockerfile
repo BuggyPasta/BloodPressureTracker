@@ -1,7 +1,6 @@
-# Use official Python slim image as base
 FROM python:3.11-slim
 
-# Install system dependencies required for matplotlib and other packages
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     gcc \
     libc-dev \
@@ -12,24 +11,26 @@ RUN apt-get update && apt-get install -y \
     python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Set working directory in container
 WORKDIR /app
 
-# Copy requirements file
-COPY requirements.txt .
+# Create necessary directories
+RUN mkdir -p /app/instance
 
-# Install Python dependencies
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy all files to container
 COPY . .
 
-# Set environment variables
 ENV FLASK_APP=app
 ENV FLASK_ENV=production
 
-# Expose port
+# Set permissions for SQLite database directory
+RUN mkdir -p /app/instance && \
+    chown -R www-data:www-data /app/instance
+
+# Use www-data instead of nobody
+USER www-data
+
 EXPOSE 5000
 
-# Command to run the application
 CMD ["flask", "run", "--host=0.0.0.0"]
