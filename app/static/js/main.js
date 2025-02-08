@@ -1,5 +1,29 @@
-// Date picker initialization
 document.addEventListener('DOMContentLoaded', function() {
+    // Registration form handling
+    const registrationForm = document.getElementById('registrationForm');
+    if (registrationForm) {
+        registrationForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            fetch('/register', {
+                method: 'POST',
+                body: new FormData(registrationForm)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    alert('User registered successfully');
+                    window.location.href = '/';
+                }
+            })
+            .catch(error => {
+                alert('Error registering user');
+            });
+        });
+    }
+
     // Initialize Flatpickr for date inputs
     const dateConfig = {
         dateFormat: "d/m/Y",

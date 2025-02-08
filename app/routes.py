@@ -26,32 +26,30 @@ def home():
 def register():
     if request.method == 'POST':
         try:
-            first_name = request.form['first_name']
-            last_name = request.form['last_name']
-            date_of_birth = datetime.strptime(request.form['date_of_birth'], '%d/%m/%Y').date()
-
+            # Check if user already exists
             existing_user = User.query.filter_by(
-                first_name=first_name,
-                last_name=last_name,
-                date_of_birth=date_of_birth
+                first_name=request.form['first_name'],
+                last_name=request.form['last_name'],
+                date_of_birth=datetime.strptime(request.form['date_of_birth'], '%d/%m/%Y').date()
             ).first()
-
+            
             if existing_user:
-                return jsonify({'error': 'This user already exists'}), 400
-
-            new_user = User(
-                first_name=first_name,
-                last_name=last_name,
-                date_of_birth=date_of_birth
+                return jsonify({'error': 'User already exists'}), 400
+                
+            # Create new user
+            user = User(
+                first_name=request.form['first_name'],
+                last_name=request.form['last_name'],
+                date_of_birth=datetime.strptime(request.form['date_of_birth'], '%d/%m/%Y').date()
             )
-            db.session.add(new_user)
+            db.session.add(user)
             db.session.commit()
-
-            return jsonify({'message': 'User registered successfully'})
+            
+            return jsonify({'message': 'User registered successfully', 'user_id': user.id})
         except Exception as e:
             db.session.rollback()
-            return jsonify({'error': 'Error registering user'}), 500
-
+            return jsonify({'error': str(e)}), 500
+            
     return render_template('register.html')
 
 @bp.route('/user/<int:user_id>')
