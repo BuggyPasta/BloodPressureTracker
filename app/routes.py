@@ -130,7 +130,7 @@ def view_report(user_id):
                 start_date = datetime.strptime(request.args.get('start_date'), '%d/%m/%Y').date()
                 end_date = datetime.strptime(request.args.get('end_date'), '%d/%m/%Y').date()
             except (ValueError, TypeError):
-                return jsonify({'error': 'Invalid date format'}), 400
+                return render_template('view_report.html', user=user, error='Invalid date format')
 
         measurements = Measurement.query.filter(
             Measurement.user_id == user_id,
@@ -139,7 +139,7 @@ def view_report(user_id):
         ).order_by(Measurement.date, Measurement.time).all()
 
         if not measurements:
-            return jsonify({'error': 'No data found for the chosen period'}), 404
+            return render_template('view_report.html', user=user, error='No data found for the chosen period')
 
         stats = calculate_stats(measurements)
         measurements_json = json.dumps([{
@@ -158,7 +158,7 @@ def view_report(user_id):
                              start_date=start_date,
                              end_date=end_date)
     except Exception as e:
-        return jsonify({'error': 'Error generating report'}), 500
+        return render_template('view_report.html', user=user, error='Error generating report')
 
 @bp.route('/user/<int:user_id>/delete', methods=['POST'])
 def delete_user(user_id):
