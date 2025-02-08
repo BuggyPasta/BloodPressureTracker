@@ -2,7 +2,8 @@
 
 {% block content %}
     <div class="register-form">
-        <form id="registration-form">
+        <div id="alertContainer"></div>
+        <form id="registrationForm">
             <div class="form-group">
                 <label for="first_name">First Name:</label>
                 <input type="text" id="first_name" name="first_name" maxlength="20" required>
@@ -15,7 +16,7 @@
 
             <div class="form-group">
                 <label for="date_of_birth">Date of Birth:</label>
-                <input type="date" id="date_of_birth" name="date_of_birth" required>
+                <input type="text" id="date_of_birth" name="date_of_birth" required>
             </div>
 
             <div class="form-actions">

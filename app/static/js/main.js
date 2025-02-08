@@ -38,6 +38,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (document.getElementById('endDate')) {
         flatpickr("#endDate", dateConfig);
     }
+    if (document.getElementById('date_of_birth')) {
+        flatpickr("#date_of_birth", dateConfig);
+    }
 
     // Initialize chart if we're on the report page and have data
     if (typeof measurementData !== 'undefined' && document.getElementById('bpChart')) {
