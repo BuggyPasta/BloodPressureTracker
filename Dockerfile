@@ -13,8 +13,8 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# Create necessary directories
-RUN mkdir -p /app/instance
+# Create necessary directories with proper permissions
+RUN mkdir -p /app/data /app/config /app/db
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
@@ -24,12 +24,8 @@ COPY . .
 ENV FLASK_APP=app
 ENV FLASK_ENV=production
 
-# Set permissions for SQLite database directory
-RUN mkdir -p /app/instance && \
-    chown -R www-data:www-data /app/instance
-
-# Use www-data instead of nobody
-USER www-data
+# Ensure directories exist and have proper permissions
+RUN chmod 777 /app/data /app/config /app/db
 
 EXPOSE 5000
 
