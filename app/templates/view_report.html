@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="report-selection">
+        <div class="report-buttons">
+            <button class="report-btn" onclick="loadReport('last_7_days')">
+                Last 7 days
+            </button>
+            <button class="report-btn" onclick="loadReport('last_week')">
+                Last week
+            </button>
+            <button class="report-btn" onclick="loadReport('last_30_days')">
+                Last 30 days
+            </button>
+            <button class="report-btn" onclick="showDateRangeModal()">
+                Custom range
+            </button>
+        </div>
+    </div>
+
+    {% if measurements %}
+        <div class="report-container">
+            <h2>Blood Pressure History for the period {{ start_date.strftime('%d/%m/%Y') }} to {{ end_date.strftime('%d/%m/%Y') }}</h2>
+            
+            <div class="patient-info">
+                <p>{{ user.first_name }} {{ user.last_name }}</p>
+                <p>DOB: {{ user.date_of_birth.strftime('%d %B %Y') }}</p>
+                <p>Age: {{ user.get_age() }} years</p>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="bpChart"></canvas>
+            </div>
+
+            <div class="stats-container">
+                <div class="stat-group">
+                    <h3>Systolic (mm Hg)</h3>
+                    <p>Min: {{ stats.systolic.min }}</p>
+                    <p>Max: {{ stats.systolic.max }}</p>
+                    <p class="with-icon">
+                        Avg: {{ stats.systolic.avg }}
+                        <img src="{{ url_for('static', filename='images/' + get_bp_icon('systolic', stats.systolic.avg)) }}" 
+                             alt="Blood pressure status" 
+                             class="bp-icon">
+                    </p>
+                </div>
+
+                <div class="stat-group">
+                    <h3>Diastolic (mm Hg)</h3>
+                    <p>Min: {{ stats.diastolic.min }}</p>
+                    <p>Max: {{ stats.diastolic.max }}</p>
+                    <p class="with-icon">
+                        Avg: {{ stats.diastolic.avg }}
+                        <img src="{{ url_for('static', filename='images/' + get_bp_icon('diastolic', stats.diastolic.avg)) }}" 
+                             alt="Blood pressure status" 
+                             class="bp-icon">
+                    </p>
+                </div>
+
+                <div class="stat-group">
+                    <h3>Heart Rate (BPM)</h3>
+                    <p>Min: {{ stats.bpm.min }}</p>
+                    <p>Max: {{ stats.bpm.max }}</p>
+                    <p>Avg: {{ stats.bpm.avg }}</p>
+                </div>
+            </div>
+
+            <div class="report-actions">
+                <button onclick="printReport()" class="action-btn">
+                    <img src="{{ url_for('static', filename='images/print.svg') }}" alt="Print">
+                    <span>Print Report</span>
+                </button>
+                <button onclick="window.location.href='{{ url_for('main.user_dashboard', user_id=user.id) }}'" class="action-btn">
+                    <img src="{{ url_for('static', filename='images/home.svg') }}" alt="Home">
+                    <span>Back to Home</span>
+                </button>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Date Range Modal -->
+    <div id="dateRangeModal" class="modal">
+        <div class="modal-content">
+            <h2>Select Date Range</h2>
+            <div class="date-inputs">
+                <div class="input-group">
+                    <label for="startDate">Start Date:</label>
+                    <input type="text" id="startDate" placeholder="DD/MM/YYYY">
+                </div>
+                <div class="input-group">
+                    <label for="endDate">End Date:</label>
+                    <input type="text" id="endDate" placeholder="DD/MM/YYYY">
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button onclick="applyDateRange()">Apply</button>
+                <button onclick="closeDateRangeModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- No Data Modal -->
+    <div id="noDataModal" class="modal">
+        <div class="modal-content">
+            <p>No data found for the chosen period</p>
+            <button onclick="closeNoDataModal()" class="primary-btn">OK</button>
+        </div>
+    </div>
+
+    <!-- Hidden form for PDF generation -->
+    <form id="pdfForm" action="{{ url_for('main.generate_pdf_report', user_id=user.id) }}" method="POST" style="display: none;">
+        <input type="hidden" name="start_date" id="pdfStartDate">
+        <input type="hidden" name="end_date" id="pdfEndDate">
+    </form>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script>
+    {% if measurements %}
+        const measurementData = {{ measurements_json|safe }};
+    {% endif %}
+</script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}

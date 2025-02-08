@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  bloodpressuretracker:
+    container_name: bloodpressuretracker
+    build:
+      context: https://github.com/BuggyPasta/BloodPressureTracker.git
+      dockerfile: Dockerfile
+    ports:
+      - "2025:2025"
+    volumes:
+      - /home/alex/docker_backup/bloodpressuretracker/data:/app/data
+      - /home/alex/docker_backup/bloodpressuretracker/config:/app/config
+      - /home/alex/docker_backup/bloodpressuretracker/db:/app/db
+    restart: unless-stopped

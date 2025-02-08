@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg fill="#000000" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <path id="secondary" d="M18,3H7V5H5V20a1,1,0,0,0,1,1H18a1,1,0,0,0,1-1V4A1,1,0,0,0,18,3Z" style="fill: rgb(44, 169, 188); stroke-width: 2;"></path>
+  <path id="primary" d="M15,17H9m6-4H9m6-4H9M7,3H18a1,1,0,0,1,1,1V20a1,1,0,0,1-1,1H6a1,1,0,0,1-1-1V5ZM5,5H7V3Z" style="fill: none; stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></path>
+</svg>

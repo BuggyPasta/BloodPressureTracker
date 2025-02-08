@@ -1,0 +1,433 @@
+from flask import Blueprint, render_template, request, jsonify, redirect, url_for, flash, send_file, Response
+from .models import db, User, Measurement
+from datetime import datetime, timedelta, date
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import cm
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.graphics.shapes import Drawing
+from reportlab.graphics.charts.linecharts import HorizontalLineChart
+from io import BytesIO
+import matplotlib.pyplot as plt
+import base64
+import csv
+import json
+import io
+
+bp = Blueprint('main', __name__)
+
+@bp.route('/')
+def home():
+    users = User.query.order_by(User.first_name, User.last_name, User.date_of_birth).all()
+    return render_template('home.html', users=users)
+
+@bp.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        try:
+            first_name = request.form['first_name']
+            last_name = request.form['last_name']
+            date_of_birth = datetime.strptime(request.form['date_of_birth'], '%d/%m/%Y').date()
+
+            existing_user = User.query.filter_by(
+                first_name=first_name,
+                last_name=last_name,
+                date_of_birth=date_of_birth
+            ).first()
+
+            if existing_user:
+                return jsonify({'error': 'This user already exists'}), 400
+
+            new_user = User(
+                first_name=first_name,
+                last_name=last_name,
+                date_of_birth=date_of_birth
+            )
+            db.session.add(new_user)
+            db.session.commit()
+
+            return jsonify({'message': 'User registered successfully'})
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({'error': 'Error registering user'}), 500
+
+    return render_template('register.html')
+
+@bp.route('/user/<int:user_id>')
+def user_dashboard(user_id):
+    user = User.query.get_or_404(user_id)
+    return render_template('user_dashboard.html', user=user)
+
+@bp.route('/user/<int:user_id>/add_measurements', methods=['GET', 'POST'])
+def add_measurements(user_id):
+    user = User.query.get_or_404(user_id)
+    
+    if request.method == 'POST':
+        try:
+            current_datetime = datetime.now()
+            measurements_data = []
+            
+            for i in range(1, 4):
+                systolic = request.form.get(f'systolic_{i}')
+                diastolic = request.form.get(f'diastolic_{i}')
+                bpm = request.form.get(f'bpm_{i}')
+                
+                if not all([systolic, diastolic, bpm]):
+                    continue
+                    
+                try:
+                    systolic = int(systolic)
+                    diastolic = int(diastolic)
+                    bpm = int(bpm)
+                    
+                    if not (30 <= systolic <= 230 and 30 <= diastolic <= 230 and 30 <= bpm <= 230):
+                        return jsonify({'error': 'Please check your input, something doesn\'t look right'}), 400
+                        
+                    measurements_data.append({
+                        'systolic': systolic,
+                        'diastolic': diastolic,
+                        'bpm': bpm
+                    })
+                except ValueError:
+                    return jsonify({'error': 'Please check your input, something doesn\'t look right'}), 400
+            
+            for data in measurements_data:
+                measurement = Measurement(
+                    user_id=user_id,
+                    date=current_datetime.date(),
+                    time=current_datetime.time(),
+                    systolic=data['systolic'],
+                    diastolic=data['diastolic'],
+                    bpm=data['bpm']
+                )
+                db.session.add(measurement)
+            
+            db.session.commit()
+            return jsonify({'message': 'Measurements saved successfully!'})
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({'error': 'Error saving measurements'}), 500
+            
+    return render_template('add_measurements.html', user=user)
+
+@bp.route('/user/<int:user_id>/report')
+def view_report(user_id):
+    try:
+        user = User.query.get_or_404(user_id)
+        report_type = request.args.get('type', 'last_7_days')
+        today = date.today()
+        
+        if report_type == 'last_7_days':
+            end_date = today
+            start_date = end_date - timedelta(days=7)
+        elif report_type == 'last_week':
+            end_date = today - timedelta(days=today.weekday() + 1)
+            start_date = end_date - timedelta(days=6)
+        elif report_type == 'last_30_days':
+            end_date = today
+            start_date = end_date - timedelta(days=30)
+        else:  # custom_range
+            try:
+                start_date = datetime.strptime(request.args.get('start_date'), '%d/%m/%Y').date()
+                end_date = datetime.strptime(request.args.get('end_date'), '%d/%m/%Y').date()
+            except (ValueError, TypeError):
+                return jsonify({'error': 'Invalid date format'}), 400
+
+        measurements = Measurement.query.filter(
+            Measurement.user_id == user_id,
+            Measurement.date >= start_date,
+            Measurement.date <= end_date
+        ).order_by(Measurement.date, Measurement.time).all()
+
+        if not measurements:
+            return jsonify({'error': 'No data found for the chosen period'}), 404
+
+        stats = calculate_stats(measurements)
+        measurements_json = json.dumps([{
+            'date': m.date.strftime('%d/%m/%Y'),
+            'time': m.time.strftime('%H:%M'),
+            'systolic': m.systolic,
+            'diastolic': m.diastolic,
+            'bpm': m.bpm
+        } for m in measurements])
+
+        return render_template('view_report.html',
+                             user=user,
+                             measurements=measurements,
+                             measurements_json=measurements_json,
+                             stats=stats,
+                             start_date=start_date,
+                             end_date=end_date)
+    except Exception as e:
+        return jsonify({'error': 'Error generating report'}), 500
+
+@bp.route('/user/<int:user_id>/delete', methods=['POST'])
+def delete_user(user_id):
+    try:
+        user = User.query.get_or_404(user_id)
+        confirmation = request.form.get('confirmation')
+        
+        if confirmation != 'DELETE':
+            return jsonify({'error': 'Invalid confirmation'}), 400
+            
+        Measurement.query.filter_by(user_id=user_id).delete()
+        db.session.delete(user)
+        db.session.commit()
+        
+        return jsonify({'message': 'User deleted successfully'})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': 'Error deleting user'}), 500
+
+@bp.route('/user/<int:user_id>/export_csv')
+def export_csv(user_id):
+    try:
+        user = User.query.get_or_404(user_id)
+        measurements = Measurement.query.filter_by(user_id=user_id).order_by(Measurement.date, Measurement.time).all()
+        
+        output = io.StringIO()
+        writer = csv.writer(output)
+        writer.writerow(['Date', 'Time', 'Systolic', 'Diastolic', 'BPM'])
+        
+        for m in measurements:
+            writer.writerow([
+                m.date.strftime('%d/%m/%Y'),
+                m.time.strftime('%H:%M'),
+                m.systolic,
+                m.diastolic,
+                m.bpm
+            ])
+        
+        return Response(
+            output.getvalue(),
+            mimetype='text/csv',
+            headers={'Content-Disposition': f'attachment;filename=measurements_{user.first_name}_{user.last_name}.csv'}
+        )
+    except Exception as e:
+        return jsonify({'error': 'Error exporting CSV'}), 500
+
+@bp.route('/user/<int:user_id>/import_csv', methods=['POST'])
+def import_csv(user_id):
+    try:
+        user = User.query.get_or_404(user_id)
+        
+        if 'file' not in request.files:
+            return jsonify({'error': 'No file uploaded'}), 400
+            
+        file = request.files['file']
+        if file.filename == '':
+            return jsonify({'error': 'No file selected'}), 400
+            
+        if not file.filename.endswith('.csv'):
+            return jsonify({'error': 'File must be CSV format'}), 400
+            
+        try:
+            stream = io.StringIO(file.stream.read().decode("UTF8"), newline=None)
+            csv_reader = csv.DictReader(stream)
+            
+            for row in csv_reader:
+                measurement = Measurement(
+                    user_id=user_id,
+                    date=datetime.strptime(row['Date'], '%d/%m/%Y').date(),
+                    time=datetime.strptime(row['Time'], '%H:%M').time(),
+                    systolic=int(row['Systolic']),
+                    diastolic=int(row['Diastolic']),
+                    bpm=int(row['BPM'])
+                )
+                db.session.add(measurement)
+                
+            db.session.commit()
+            return jsonify({'message': 'CSV imported successfully'})
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({'error': 'Error processing CSV file'}), 400
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': 'Error importing CSV'}), 500
+
+@bp.route('/user/<int:user_id>/generate_pdf', methods=['POST'])
+def generate_pdf_report(user_id):
+    try:
+        user = User.query.get_or_404(user_id)
+        start_date = datetime.strptime(request.form['start_date'], '%d/%m/%Y').date()
+        end_date = datetime.strptime(request.form['end_date'], '%d/%m/%Y').date()
+        
+        measurements = Measurement.query.filter(
+            Measurement.user_id == user_id,
+            Measurement.date >= start_date,
+            Measurement.date <= end_date
+        ).order_by(Measurement.date, Measurement.time).all()
+        
+        if not measurements:
+            return jsonify({'error': 'No data found for the chosen period'}), 404
+
+        buffer = BytesIO()
+        doc = SimpleDocTemplate(
+            buffer,
+            pagesize=A4,
+            rightMargin=1.5*cm,
+            leftMargin=1.5*cm,
+            topMargin=1.5*cm,
+            bottomMargin=1.5*cm
+        )
+
+        styles = getSampleStyleSheet()
+        title_style = ParagraphStyle(
+            'CustomTitle',
+            parent=styles['Heading1'],
+            fontSize=14,
+            spaceAfter=30
+        )
+        normal_style = styles['Normal']
+        normal_style.fontSize = 12
+        table_style = ParagraphStyle(
+            'CustomTable',
+            parent=styles['Normal'],
+            fontSize=11
+        )
+
+        elements = []
+        
+        elements.append(Paragraph(
+            f"Blood Pressure History for the period {start_date.strftime('%d/%m/%Y')} to {end_date.strftime('%d/%m/%Y')}",
+            title_style
+        ))
+        elements.append(Paragraph(f"{user.first_name} {user.last_name}", normal_style))
+        elements.append(Paragraph(f"DOB: {user.date_of_birth.strftime('%d %B %Y')}", normal_style))
+        elements.append(Paragraph(f"Age: {user.get_age()} years", normal_style))
+        elements.append(Spacer(1, 20))
+
+        # Generate chart with proper cleanup
+        plt.figure(figsize=(8, 4))
+        try:
+            dates = [m.date for m in measurements]
+            systolic = [m.systolic for m in measurements]
+            diastolic = [m.diastolic for m in measurements]
+            
+            plt.plot(dates, systolic, label='Systolic', color='#FF6384')
+            plt.plot(dates, diastolic, label='Diastolic', color='#36A2EB')
+            plt.legend()
+            plt.xticks(rotation=45)
+            plt.tight_layout()
+            
+            chart_buffer = BytesIO()
+            plt.savefig(chart_buffer, format='png')
+            chart_buffer.seek(0)
+            elements.append(Image(chart_buffer, width=400, height=200))
+            elements.append(Spacer(1, 20))
+        finally:
+            plt.close('all')  # Ensure figure is closed even if error occurs
+
+        # Add statistics
+        stats = calculate_stats(measurements)
+        stats_data = [
+            ['', 'Minimum', 'Maximum', 'Average'],
+            ['Systolic', stats['systolic']['min'], stats['systolic']['max'], stats['systolic']['avg']],
+            ['Diastolic', stats['diastolic']['min'], stats['diastolic']['max'], stats['diastolic']['avg']],
+            ['BPM', stats['bpm']['min'], stats['bpm']['max'], stats['bpm']['avg']]
+        ]
+        
+        stats_table = Table(stats_data)
+        stats_table.setStyle(TableStyle([
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, -1), 11),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('BACKGROUND', (0, 0), (-1, 0), colors.grey)
+        ]))
+        elements.append(stats_table)
+        elements.append(Spacer(1, 20))
+
+        # Add measurements table
+        table_data = [['Date', 'Time', 'Systolic', 'Diastolic', 'BPM']]
+        for m in measurements:
+            table_data.append([
+                m.date.strftime('%d/%m/%Y'),
+                m.time.strftime('%H:%M'),
+                str(m.systolic),
+                str(m.diastolic),
+                str(m.bpm)
+            ])
+        
+        measurements_table = Table(table_data)
+        measurements_table.setStyle(TableStyle([
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, -1), 11),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('BACKGROUND', (0, 0), (-1, 0), colors.grey)
+        ]))
+        elements.append(measurements_table)
+
+        doc.build(elements)
+        buffer.seek(0)
+        
+        return send_file(
+            buffer,
+            download_name=f'blood_pressure_report_{start_date.strftime("%Y%m%d")}_{end_date.strftime("%Y%m%d")}.pdf',
+            mimetype='application/pdf'
+        )
+    except Exception as e:
+        print(f"Error generating PDF: {str(e)}")  # For development
+        return jsonify({'error': 'Failed to generate PDF report'}), 500
+    finally:
+        plt.close('all')  # Cleanup any remaining matplotlib resources
+
+def calculate_stats(measurements):
+    try:
+        systolic_values = [m.systolic for m in measurements]
+        diastolic_values = [m.diastolic for m in measurements]
+        bpm_values = [m.bpm for m in measurements]
+        
+        return {
+            'systolic': {
+                'min': min(systolic_values),
+                'max': max(systolic_values),
+                'avg': round(sum(systolic_values) / len(systolic_values))
+            },
+            'diastolic': {
+                'min': min(diastolic_values),
+                'max': max(diastolic_values),
+                'avg': round(sum(diastolic_values) / len(diastolic_values))
+            },
+            'bpm': {
+                'min': min(bpm_values),
+                'max': max(bpm_values),
+                'avg': round(sum(bpm_values) / len(bpm_values))
+            }
+        }
+    except Exception as e:
+        # Return default values if calculation fails
+        return {
+            'systolic': {'min': 0, 'max': 0, 'avg': 0},
+            'diastolic': {'min': 0, 'max': 0, 'avg': 0},
+            'bpm': {'min': 0, 'max': 0, 'avg': 0}
+        }
+
+def get_bp_icon(type, value):
+    try:
+        if type == 'systolic':
+            if value < 90:
+                return 'Face3Neutral.svg'
+            elif value < 120:
+                return 'Face1VeryHappy.svg'
+            elif value <= 129:
+                return 'Face2Happy.svg'
+            elif value <= 139:
+                return 'Face4Unhappy.svg'
+            else:
+                return 'Face5VeryUnhappy.svg'
+        else:  # diastolic
+            if value < 60:
+                return 'Face3Neutral.svg'
+            elif value < 80:
+                return 'Face1VeryHappy.svg'
+            elif value <= 84:
+                return 'Face2Happy.svg'
+            elif value <= 89:
+                return 'Face4Unhappy.svg'
+            else:
+                return 'Face5VeryUnhappy.svg'
+    except Exception as e:
+        return 'Face3Neutral.svg'  # Return neutral face as default
