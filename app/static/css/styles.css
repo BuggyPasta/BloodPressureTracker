@@ -310,13 +310,15 @@ input[type="password"]:focus {
 
 /* Bottom Home Button */
 .bottom-home-button {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
     margin-top: 2rem;
-    text-align: center;
 }
 
 .bottom-home-button .action-btn {
+    flex: 1;
     max-width: 300px;
-    margin: 0 auto;
 }
 
 /* Footer Styles */
