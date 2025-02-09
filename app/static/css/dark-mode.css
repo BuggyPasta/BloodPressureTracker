@@ -63,6 +63,14 @@
     box-shadow: 0 4px 6px var(--shadow-color);
 }
 
+[data-theme="dark"] #disclaimer-modal .modal-content {
+    font-size: 0.95rem;
+}
+
+[data-theme="dark"] .modal-buttons {
+    background-color: var(--card-background);
+}
+
 [data-theme="dark"] .measurement-group {
     background-color: var(--card-background);
 }

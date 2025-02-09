@@ -208,11 +208,18 @@ input[type="password"]:focus {
 .modal-content {
     position: relative;
     background-color: var(--background-color);
-    margin: 15% auto;
+    margin: 5% auto;
     padding: 2rem;
     border-radius: 8px;
     max-width: 500px;
     width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+#disclaimer-modal .modal-content {
+    font-size: 0.95rem;
+    line-height: 1.5;
 }
 
 .modal-buttons {
@@ -220,6 +227,10 @@ input[type="password"]:focus {
     gap: 1rem;
     justify-content: center;
     margin-top: 1.5rem;
+    position: sticky;
+    bottom: 0;
+    background-color: var(--background-color);
+    padding-top: 1rem;
 }
 
 /* Measurement Form Styles */
@@ -390,8 +401,9 @@ footer {
     }
 
     .modal-content {
-        margin: 10% auto;
+        margin: 5% auto;
         padding: 1.5rem;
+        max-height: 90vh;
     }
 
     .modal-buttons {
