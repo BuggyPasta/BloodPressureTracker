@@ -164,6 +164,13 @@ main {
     margin-bottom: 1.5rem;
 }
 
+.form-actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
 label {
     display: block;
     font-size: 1.1rem;
@@ -386,6 +393,11 @@ footer {
     .action-buttons,
     .user-buttons-grid {
         grid-template-columns: 1fr;
+    }
+
+    .form-actions {
+        grid-template-columns: 1fr;
+        gap: 1rem;
     }
 
     .action-btn {
