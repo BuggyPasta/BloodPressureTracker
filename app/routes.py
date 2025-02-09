@@ -235,26 +235,32 @@ def import_csv(user_id):
         try:
             stream = io.StringIO(file.stream.read().decode("UTF8"), newline=None)
             csv_reader = csv.DictReader(stream)
+            rows_added = 0
             
             for row in csv_reader:
-                measurement = Measurement(
-                    user_id=user_id,
-                    date=datetime.strptime(row['Date'], '%d/%m/%Y').date(),
-                    time=datetime.strptime(row['Time'], '%H:%M').time(),
-                    systolic=int(row['Systolic']),
-                    diastolic=int(row['Diastolic']),
-                    bpm=int(row['BPM'])
-                )
-                db.session.add(measurement)
+                try:
+                    measurement = Measurement(
+                        user_id=user_id,
+                        date=datetime.strptime(row['Date'], '%d/%m/%Y').date(),
+                        time=datetime.strptime(row['Time'], '%H:%M').time(),
+                        systolic=int(row['Systolic']),
+                        diastolic=int(row['Diastolic']),
+                        bpm=int(row['BPM'])
+                    )
+                    db.session.add(measurement)
+                    rows_added += 1
+                except (ValueError, KeyError) as e:
+                    db.session.rollback()
+                    return jsonify({'error': f'Invalid data format in CSV: {str(e)}'}), 400
                 
             db.session.commit()
-            return jsonify({'message': 'CSV imported successfully'})
+            return jsonify({'message': f'CSV imported successfully. {rows_added} measurements added.'})
         except Exception as e:
             db.session.rollback()
-            return jsonify({'error': 'Error processing CSV file'}), 400
+            return jsonify({'error': f'Error processing CSV file: {str(e)}'}), 400
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': 'Error importing CSV'}), 500
+        return jsonify({'error': f'Error importing CSV: {str(e)}'}), 500
 
 @bp.route('/user/<int:user_id>/generate_pdf', methods=['POST'])
 def generate_pdf_report(user_id):

@@ -188,11 +188,17 @@ function loadReport(type) {
             'Accept': 'application/json'
         }
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
     .then(data => {
-        if (data.error === "No data found") {
+        if (data.error) {
             document.getElementById('noDataModal').style.display = 'block';
         } else {
+            // Remove the Accept header for the actual navigation
             window.location.href = url;
         }
     })
