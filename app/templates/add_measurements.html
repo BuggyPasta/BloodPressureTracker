@@ -1,33 +1,39 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <form id="measurements-form">
+    <form id="measurements-form" class="measurements-container">
         {% for i in range(1, 4) %}
         <div class="measurement-group">
             <h3>Measurement {{ i }}</h3>
             <div class="measurement-inputs">
                 <div class="input-group">
                     <label for="systolic_{{ i }}">Systolic:</label>
-                    <input type="number" id="systolic_{{ i }}" name="systolic_{{ i }}" min="30" max="230">
-                    <span class="unit">mm Hg</span>
+                    <div class="input-with-unit">
+                        <input type="number" id="systolic_{{ i }}" name="systolic_{{ i }}" min="30" max="230">
+                        <span class="unit">mm Hg</span>
+                    </div>
                 </div>
                 <div class="input-group">
                     <label for="diastolic_{{ i }}">Diastolic:</label>
-                    <input type="number" id="diastolic_{{ i }}" name="diastolic_{{ i }}" min="30" max="230">
-                    <span class="unit">mm Hg</span>
+                    <div class="input-with-unit">
+                        <input type="number" id="diastolic_{{ i }}" name="diastolic_{{ i }}" min="30" max="230">
+                        <span class="unit">mm Hg</span>
+                    </div>
                 </div>
                 <div class="input-group">
                     <label for="bpm_{{ i }}">Heart Rate:</label>
-                    <input type="number" id="bpm_{{ i }}" name="bpm_{{ i }}" min="30" max="230">
-                    <span class="unit">BPM</span>
+                    <div class="input-with-unit">
+                        <input type="number" id="bpm_{{ i }}" name="bpm_{{ i }}" min="30" max="230">
+                        <span class="unit">BPM</span>
+                    </div>
                 </div>
             </div>
         </div>
         {% endfor %}
 
         <div class="button-group">
-            <button type="submit" class="primary-btn">Save Measurements</button>
-            <button type="button" class="secondary-btn" onclick="confirmCancel()">Cancel</button>
+            <button type="submit" class="action-btn primary-btn">Save Measurements</button>
+            <button type="button" class="action-btn secondary-btn" onclick="confirmCancel()">Cancel</button>
         </div>
     </form>
 
@@ -37,10 +43,10 @@
             <h2>Cancel Measurements?</h2>
             <p>Are you sure you want to cancel? All entered measurements will be lost.</p>
             <div class="modal-buttons">
-                <button onclick="window.location.href='{{ url_for('main.user_dashboard', user_id=user.id) }}'">
+                <button onclick="window.location.href='{{ url_for('main.user_dashboard', user_id=user.id) }}'" class="action-btn">
                     Yes, cancel measurements
                 </button>
-                <button onclick="closeCancelModal()">
+                <button onclick="closeCancelModal()" class="action-btn secondary-btn">
                     No, continue entering measurements
                 </button>
             </div>

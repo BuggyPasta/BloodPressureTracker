@@ -8,22 +8,22 @@
     </div>
 
     <div class="action-buttons">
-        <button onclick="window.location.href='{{ url_for('main.add_measurements', user_id=user.id) }}'" class="action-btn">
+        <button onclick="window.location.href='{{ url_for('main.add_measurements', user_id=user.id) }}'" class="action-btn primary-btn">
             <img src="{{ url_for('static', filename='icons/measurements.svg') }}" alt="Add">
             <span>Add Measurements</span>
         </button>
         
-        <button onclick="window.location.href='{{ url_for('main.view_report', user_id=user.id) }}'" class="action-btn">
+        <button onclick="window.location.href='{{ url_for('main.view_report', user_id=user.id) }}'" class="action-btn primary-btn">
             <img src="{{ url_for('static', filename='icons/report.svg') }}" alt="Report">
             <span>View Report</span>
         </button>
         
-        <button onclick="window.location.href='{{ url_for('main.export_csv', user_id=user.id) }}'" class="action-btn">
+        <button onclick="window.location.href='{{ url_for('main.export_csv', user_id=user.id) }}'" class="action-btn primary-btn">
             <img src="{{ url_for('static', filename='icons/csv_export.svg') }}" alt="Export">
             <span>Export to CSV</span>
         </button>
         
-        <button onclick="document.getElementById('csv-upload').click()" class="action-btn">
+        <button onclick="document.getElementById('csv-upload').click()" class="action-btn primary-btn">
             <img src="{{ url_for('static', filename='icons/csv_import.svg') }}" alt="Import">
             <span>Import from CSV</span>
         </button>
@@ -35,7 +35,7 @@
             <span>Delete User</span>
         </button>
         
-        <button onclick="window.location.href='{{ url_for('main.home') }}'" class="action-btn">
+        <button onclick="window.location.href='{{ url_for('main.home') }}'" class="action-btn secondary-btn">
             <img src="{{ url_for('static', filename='icons/home.svg') }}" alt="Home">
             <span>Back to Home</span>
         </button>
@@ -47,8 +47,8 @@
             <h2>Delete User?</h2>
             <p>Are you sure you want to delete this user? This action cannot be undone.</p>
             <div class="modal-buttons">
-                <button onclick="proceedWithDelete()">Yes, proceed with deletion</button>
-                <button onclick="closeDeleteModal()">No, keep this user</button>
+                <button onclick="proceedWithDelete()" class="action-btn delete-btn">Yes, proceed with deletion</button>
+                <button onclick="closeDeleteModal()" class="action-btn secondary-btn">No, keep this user</button>
             </div>
         </div>
     </div>
@@ -60,8 +60,8 @@
             <p>To confirm deletion, please type DELETE in the box below:</p>
             <input type="text" id="delete-confirmation-input" placeholder="Type DELETE here">
             <div class="modal-buttons">
-                <button onclick="finalizeDelete({{ user.id }})">Confirm Deletion</button>
-                <button onclick="closeDeleteConfirmationModal()">Cancel</button>
+                <button onclick="finalizeDelete({{ user.id }})" class="action-btn delete-btn">Confirm Deletion</button>
+                <button onclick="closeDeleteConfirmationModal()" class="action-btn secondary-btn">Cancel</button>
             </div>
         </div>
     </div>
@@ -71,7 +71,7 @@
         <div class="modal-content">
             <h2>Upload Error</h2>
             <p id="csv-error-message"></p>
-            <button onclick="document.getElementById('csv-error-modal').style.display='none'">OK</button>
+            <button onclick="document.getElementById('csv-error-modal').style.display='none'" class="action-btn">OK</button>
         </div>
     </div>
 {% endblock %}

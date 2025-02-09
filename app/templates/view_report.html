@@ -3,19 +3,19 @@
 {% block content %}
     <div class="report-selection">
         <div class="report-buttons">
-            <button class="report-btn" onclick="loadReport('today')">
+            <button class="report-btn primary-btn" onclick="loadReport('today')">
                 Today
             </button>
-            <button class="report-btn" onclick="loadReport('last_7_days')">
+            <button class="report-btn primary-btn" onclick="loadReport('last_7_days')">
                 Last 7 days
             </button>
-            <button class="report-btn" onclick="loadReport('last_week')">
+            <button class="report-btn primary-btn" onclick="loadReport('last_week')">
                 Last week
             </button>
-            <button class="report-btn" onclick="loadReport('last_30_days')">
+            <button class="report-btn primary-btn" onclick="loadReport('last_30_days')">
                 Last 30 days
             </button>
-            <button class="report-btn" onclick="showDateRangeModal()">
+            <button class="report-btn primary-btn" onclick="showDateRangeModal()">
                 Custom range
             </button>
         </div>
@@ -69,11 +69,11 @@
             </div>
 
             <div class="report-actions">
-                <button onclick="printReport()" class="action-btn">
+                <button onclick="printReport()" class="action-btn primary-btn">
                     <img src="{{ url_for('static', filename='icons/print.svg') }}" alt="Print">
                     <span>Print Report</span>
                 </button>
-                <button onclick="window.location.href='{{ url_for('main.user_dashboard', user_id=user.id) }}'" class="action-btn">
+                <button onclick="window.location.href='{{ url_for('main.user_dashboard', user_id=user.id) }}'" class="action-btn secondary-btn">
                     <img src="{{ url_for('static', filename='icons/home.svg') }}" alt="Home">
                     <span>Back to Home</span>
                 </button>
@@ -96,8 +96,8 @@
                 </div>
             </div>
             <div class="modal-buttons">
-                <button onclick="applyDateRange()">Apply</button>
-                <button onclick="closeDateRangeModal()">Cancel</button>
+                <button onclick="applyDateRange()" class="action-btn primary-btn">Apply</button>
+                <button onclick="closeDateRangeModal()" class="action-btn secondary-btn">Cancel</button>
             </div>
         </div>
     </div>
@@ -106,7 +106,7 @@
     <div id="noDataModal" class="modal">
         <div class="modal-content">
             <p>No data found for the chosen period</p>
-            <button onclick="closeNoDataModal()" class="primary-btn">OK</button>
+            <button onclick="closeNoDataModal()" class="action-btn primary-btn">OK</button>
         </div>
     </div>
 
