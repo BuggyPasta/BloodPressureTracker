@@ -3,6 +3,9 @@
 {% block content %}
     <div class="report-selection">
         <div class="report-buttons">
+            <button class="report-btn" onclick="loadReport('today')">
+                Today
+            </button>
             <button class="report-btn" onclick="loadReport('last_7_days')">
                 Last 7 days
             </button>
@@ -39,7 +42,7 @@
                     <p>Max: {{ stats.systolic.max }}</p>
                     <p class="with-icon">
                         Avg: {{ stats.systolic.avg }}
-                        <img src="{{ url_for('static', filename='images/' + get_bp_icon('systolic', stats.systolic.avg)) }}" 
+                        <img src="{{ url_for('static', filename='icons/' + get_bp_icon('systolic', stats.systolic.avg)) }}" 
                              alt="Blood pressure status" 
                              class="bp-icon">
                     </p>
@@ -51,7 +54,7 @@
                     <p>Max: {{ stats.diastolic.max }}</p>
                     <p class="with-icon">
                         Avg: {{ stats.diastolic.avg }}
-                        <img src="{{ url_for('static', filename='images/' + get_bp_icon('diastolic', stats.diastolic.avg)) }}" 
+                        <img src="{{ url_for('static', filename='icons/' + get_bp_icon('diastolic', stats.diastolic.avg)) }}" 
                              alt="Blood pressure status" 
                              class="bp-icon">
                     </p>
@@ -67,11 +70,11 @@
 
             <div class="report-actions">
                 <button onclick="printReport()" class="action-btn">
-                    <img src="{{ url_for('static', filename='images/print.svg') }}" alt="Print">
+                    <img src="{{ url_for('static', filename='icons/print.svg') }}" alt="Print">
                     <span>Print Report</span>
                 </button>
                 <button onclick="window.location.href='{{ url_for('main.user_dashboard', user_id=user.id) }}'" class="action-btn">
-                    <img src="{{ url_for('static', filename='images/home.svg') }}" alt="Home">
+                    <img src="{{ url_for('static', filename='icons/home.svg') }}" alt="Home">
                     <span>Back to Home</span>
                 </button>
             </div>

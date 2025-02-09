@@ -9,34 +9,34 @@
 
     <div class="action-buttons">
         <button onclick="window.location.href='{{ url_for('main.add_measurements', user_id=user.id) }}'" class="action-btn">
-            <img src="{{ url_for('static', filename='images/add.svg') }}" alt="Add">
+            <img src="{{ url_for('static', filename='icons/measurements.svg') }}" alt="Add">
             <span>Add Measurements</span>
         </button>
         
         <button onclick="window.location.href='{{ url_for('main.view_report', user_id=user.id) }}'" class="action-btn">
-            <img src="{{ url_for('static', filename='images/report.svg') }}" alt="Report">
+            <img src="{{ url_for('static', filename='icons/report.svg') }}" alt="Report">
             <span>View Report</span>
         </button>
         
         <button onclick="window.location.href='{{ url_for('main.export_csv', user_id=user.id) }}'" class="action-btn">
-            <img src="{{ url_for('static', filename='images/export.svg') }}" alt="Export">
+            <img src="{{ url_for('static', filename='icons/csv_export.svg') }}" alt="Export">
             <span>Export to CSV</span>
         </button>
         
-        <label for="csv-upload" class="action-btn">
-            <img src="{{ url_for('static', filename='images/import.svg') }}" alt="Import">
+        <button onclick="document.getElementById('csv-upload').click()" class="action-btn">
+            <img src="{{ url_for('static', filename='icons/csv_import.svg') }}" alt="Import">
             <span>Import from CSV</span>
-        </label>
+        </button>
         <input type="file" id="csv-upload" accept=".csv" style="display: none;" 
                onchange="uploadCSV({{ user.id }}, this.files[0])">
         
         <button onclick="confirmDelete({{ user.id }})" class="action-btn delete-btn">
-            <img src="{{ url_for('static', filename='images/delete.svg') }}" alt="Delete">
+            <img src="{{ url_for('static', filename='icons/user_delete.svg') }}" alt="Delete">
             <span>Delete User</span>
         </button>
         
         <button onclick="window.location.href='{{ url_for('main.home') }}'" class="action-btn">
-            <img src="{{ url_for('static', filename='images/home.svg') }}" alt="Home">
+            <img src="{{ url_for('static', filename='icons/home.svg') }}" alt="Home">
             <span>Back to Home</span>
         </button>
     </div>

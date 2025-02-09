@@ -113,10 +113,13 @@ def add_measurements(user_id):
 def view_report(user_id):
     try:
         user = User.query.get_or_404(user_id)
-        report_type = request.args.get('type', 'last_7_days')
+        report_type = request.args.get('type', 'today')  # Changed default to 'today'
         today = date.today()
         
-        if report_type == 'last_7_days':
+        if report_type == 'today':
+            start_date = today
+            end_date = today
+        elif report_type == 'last_7_days':
             end_date = today
             start_date = end_date - timedelta(days=7)
         elif report_type == 'last_week':
