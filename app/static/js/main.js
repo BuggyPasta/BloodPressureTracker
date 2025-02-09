@@ -1,4 +1,36 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Theme toggle initialization
+    const themeToggle = document.getElementById('theme-toggle');
+    if (themeToggle) {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.body.setAttribute('data-theme', savedTheme);
+        updateThemeIcon(savedTheme);
+        
+        themeToggle.addEventListener('click', function() {
+            const currentTheme = document.body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        });
+    }
+
+    // Disclaimer modal handling
+    const disclaimerTrigger = document.getElementById('disclaimer-trigger');
+    const disclaimerModal = document.getElementById('disclaimer-modal');
+    if (disclaimerTrigger && disclaimerModal) {
+        disclaimerTrigger.addEventListener('click', function() {
+            disclaimerModal.style.display = 'block';
+        });
+
+        const closeButtons = disclaimerModal.getElementsByClassName('close-modal');
+        Array.from(closeButtons).forEach(button => {
+            button.addEventListener('click', function() {
+                disclaimerModal.style.display = 'none';
+            });
+        });
+    }
+
     // Registration form handling
     const registrationForm = document.getElementById('registrationForm');
     if (registrationForm) {
@@ -52,7 +84,28 @@ document.addEventListener('DOMContentLoaded', function() {
     if (measurementsForm) {
         measurementsForm.addEventListener('submit', submitMeasurements);
     }
+
+    // Close modals when clicking outside
+    window.addEventListener('click', function(event) {
+        const modals = document.getElementsByClassName('modal');
+        Array.from(modals).forEach(modal => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    });
 });
+
+// Theme icon update function
+function updateThemeIcon(theme) {
+    const themeIcon = document.querySelector('.theme-icon');
+    if (themeIcon) {
+        themeIcon.src = theme === 'light' 
+            ? '/static/icons/mode_dark.svg'
+            : '/static/icons/mode_light.svg';
+        themeIcon.alt = theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode';
+    }
+}
 
 // Chart initialization
 function initializeChart() {

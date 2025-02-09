@@ -4,19 +4,29 @@
     <div class="report-selection">
         <div class="report-buttons">
             <button class="report-btn primary-btn" onclick="loadReport('today')">
-                Today
+                <div class="button-content">
+                    <span>Today</span>
+                </div>
             </button>
             <button class="report-btn primary-btn" onclick="loadReport('last_7_days')">
-                Last 7 days
+                <div class="button-content">
+                    <span>Last 7 days</span>
+                </div>
             </button>
             <button class="report-btn primary-btn" onclick="loadReport('last_week')">
-                Last week
+                <div class="button-content">
+                    <span>Last week</span>
+                </div>
             </button>
             <button class="report-btn primary-btn" onclick="loadReport('last_30_days')">
-                Last 30 days
+                <div class="button-content">
+                    <span>Last 30 days</span>
+                </div>
             </button>
             <button class="report-btn primary-btn" onclick="showDateRangeModal()">
-                Custom range
+                <div class="button-content">
+                    <span>Custom range</span>
+                </div>
             </button>
         </div>
     </div>
@@ -25,7 +35,7 @@
         <div class="report-container">
             <h2>Blood Pressure History for the period {{ start_date.strftime('%d/%m/%Y') }} to {{ end_date.strftime('%d/%m/%Y') }}</h2>
             
-            <div class="patient-info">
+            <div class="patient-info centered-text">
                 <p>{{ user.first_name }} {{ user.last_name }}</p>
                 <p>DOB: {{ user.date_of_birth.strftime('%d %B %Y') }}</p>
                 <p>Age: {{ user.get_age() }} years</p>
@@ -68,14 +78,18 @@
                 </div>
             </div>
 
-            <div class="report-actions">
+            <div class="action-buttons">
                 <button onclick="printReport()" class="action-btn primary-btn">
-                    <img src="{{ url_for('static', filename='icons/print.svg') }}" alt="Print">
-                    <span>Print Report</span>
+                    <div class="button-content">
+                        <img src="{{ url_for('static', filename='icons/print.svg') }}" alt="Print">
+                        <span>Print Report</span>
+                    </div>
                 </button>
                 <button onclick="window.location.href='{{ url_for('main.user_dashboard', user_id=user.id) }}'" class="action-btn secondary-btn">
-                    <img src="{{ url_for('static', filename='icons/home.svg') }}" alt="Home">
-                    <span>Back to Home</span>
+                    <div class="button-content">
+                        <img src="{{ url_for('static', filename='icons/home.svg') }}" alt="Home">
+                        <span>Back to Home</span>
+                    </div>
                 </button>
             </div>
         </div>
@@ -96,8 +110,16 @@
                 </div>
             </div>
             <div class="modal-buttons">
-                <button onclick="applyDateRange()" class="action-btn primary-btn">Apply</button>
-                <button onclick="closeDateRangeModal()" class="action-btn secondary-btn">Cancel</button>
+                <button onclick="applyDateRange()" class="action-btn primary-btn">
+                    <div class="button-content">
+                        <span>Apply</span>
+                    </div>
+                </button>
+                <button onclick="closeDateRangeModal()" class="action-btn secondary-btn">
+                    <div class="button-content">
+                        <span>Cancel</span>
+                    </div>
+                </button>
             </div>
         </div>
     </div>
@@ -106,7 +128,11 @@
     <div id="noDataModal" class="modal">
         <div class="modal-content">
             <p>No data found for the chosen period</p>
-            <button onclick="closeNoDataModal()" class="action-btn primary-btn">OK</button>
+            <button onclick="closeNoDataModal()" class="action-btn primary-btn">
+                <div class="button-content">
+                    <span>OK</span>
+                </div>
+            </button>
         </div>
     </div>
 
@@ -115,6 +141,15 @@
         <input type="hidden" name="start_date" id="pdfStartDate">
         <input type="hidden" name="end_date" id="pdfEndDate">
     </form>
+
+    <div class="bottom-home-button">
+        <button onclick="window.location.href='{{ url_for('main.home') }}'" class="action-btn secondary-btn">
+            <div class="button-content">
+                <img src="{{ url_for('static', filename='icons/home.svg') }}" alt="Home">
+                <span>Back to Home</span>
+            </div>
+        </button>
+    </div>
 {% endblock %}
 
 {% block scripts %}

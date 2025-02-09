@@ -31,9 +31,19 @@
         </div>
         {% endfor %}
 
-        <div class="button-group">
-            <button type="submit" class="action-btn primary-btn">Save Measurements</button>
-            <button type="button" class="action-btn secondary-btn" onclick="confirmCancel()">Cancel</button>
+        <div class="action-buttons">
+            <button type="submit" class="action-btn primary-btn">
+                <div class="button-content">
+                    <img src="{{ url_for('static', filename='icons/icon_ok.svg') }}" alt="Save">
+                    <span>Save Measurements</span>
+                </div>
+            </button>
+            <button type="button" class="action-btn secondary-btn" onclick="confirmCancel()">
+                <div class="button-content">
+                    <img src="{{ url_for('static', filename='icons/icon_x.svg') }}" alt="Cancel">
+                    <span>Cancel</span>
+                </div>
+            </button>
         </div>
     </form>
 
@@ -44,10 +54,14 @@
             <p>Are you sure you want to cancel? All entered measurements will be lost.</p>
             <div class="modal-buttons">
                 <button onclick="window.location.href='{{ url_for('main.user_dashboard', user_id=user.id) }}'" class="action-btn">
-                    Yes, cancel measurements
+                    <div class="button-content">
+                        <span>Yes, cancel measurements</span>
+                    </div>
                 </button>
                 <button onclick="closeCancelModal()" class="action-btn secondary-btn">
-                    No, continue entering measurements
+                    <div class="button-content">
+                        <span>No, continue entering measurements</span>
+                    </div>
                 </button>
             </div>
         </div>

@@ -63,6 +63,12 @@ header {
     max-width: 1200px;
     margin: 0 auto;
     display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo-title {
+    display: flex;
     align-items: center;
     gap: 1rem;
 }
@@ -84,17 +90,24 @@ main {
 /* Button Styles */
 .action-buttons {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
     margin: 2rem 0;
+    width: 100%;
+}
+
+.button-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
 }
 
 .action-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.8rem;
-    padding: 1rem;
+    padding: 1.2rem;
     font-size: 1.2rem;
     background-color: var(--primary-color);
     color: white;
@@ -102,6 +115,7 @@ main {
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    width: 100%;
 }
 
 .action-btn:hover {
@@ -109,8 +123,8 @@ main {
 }
 
 .action-btn img {
-    width: 24px;
-    height: 24px;
+    width: 32px;
+    height: 32px;
 }
 
 .delete-btn {
@@ -121,7 +135,31 @@ main {
     background-color: #bd2130;
 }
 
+/* User Buttons Grid */
+.user-buttons-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.user-button {
+    min-height: 120px;
+}
+
+.section-divider {
+    margin: 3rem 0;
+    border: none;
+    height: 1px;
+    background-color: var(--border-color);
+}
+
 /* Form Styles */
+.form-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
 .form-group {
     margin-bottom: 1.5rem;
 }
@@ -150,6 +188,11 @@ input[type="password"]:focus {
     outline: none;
 }
 
+/* Centered Text */
+.centered-text {
+    text-align: center;
+}
+
 /* Modal Styles */
 .modal {
     display: none;
@@ -175,7 +218,7 @@ input[type="password"]:focus {
 .modal-buttons {
     display: flex;
     gap: 1rem;
-    justify-content: flex-end;
+    justify-content: center;
     margin-top: 1.5rem;
 }
 
@@ -193,23 +236,29 @@ input[type="password"]:focus {
     gap: 1rem;
 }
 
+.input-with-unit {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
 .unit {
     font-size: 0.9rem;
     color: #666;
-    margin-left: 0.5rem;
+    white-space: nowrap;
 }
 
 /* Report Styles */
 .report-buttons {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1rem;
     justify-content: center;
     margin-bottom: 2rem;
 }
 
 .report-btn {
-    padding: 0.8rem 1.5rem;
+    padding: 1rem;
     font-size: 1.1rem;
     background-color: var(--primary-color);
     color: white;
@@ -248,6 +297,17 @@ input[type="password"]:focus {
     margin-left: 0.5rem;
 }
 
+/* Bottom Home Button */
+.bottom-home-button {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.bottom-home-button .action-btn {
+    max-width: 300px;
+    margin: 0 auto;
+}
+
 /* Footer Styles */
 footer {
     background-color: var(--background-color);
@@ -276,25 +336,53 @@ footer {
     cursor: pointer;
 }
 
+.theme-toggle-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+}
+
 .theme-icon {
     width: 24px;
     height: 24px;
 }
 
+.disclaimer-btn {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: 1rem;
+    padding: 0.5rem;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
-    .action-buttons {
+    .logo-title {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .logo-title h1 {
+        line-height: 1.2;
+        font-size: 2rem;
+    }
+
+    .action-buttons,
+    .user-buttons-grid {
         grid-template-columns: 1fr;
     }
 
     .action-btn {
-        padding: 1.2rem;
+        padding: 1.5rem;
         font-size: 1.3rem;
     }
 
     .action-btn img {
-        width: 28px;
-        height: 28px;
+        width: 36px;
+        height: 36px;
     }
 
     .measurement-inputs {
@@ -315,6 +403,10 @@ footer {
     }
 
     .stats-container {
+        grid-template-columns: 1fr;
+    }
+
+    .report-buttons {
         grid-template-columns: 1fr;
     }
 }
