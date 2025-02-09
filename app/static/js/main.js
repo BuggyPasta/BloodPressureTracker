@@ -182,7 +182,24 @@ function closeCancelModal() {
 function loadReport(type) {
     const userId = window.location.pathname.split('/')[2];
     let url = `/user/${userId}/report?type=${type}`;
-    window.location.href = url;
+    
+    fetch(url, {
+        headers: {
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error === "No data found") {
+            document.getElementById('noDataModal').style.display = 'block';
+        } else {
+            window.location.href = url;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('noDataModal').style.display = 'block';
+    });
 }
 
 function showDateRangeModal() {
@@ -208,7 +225,26 @@ function applyDateRange() {
 
     const userId = window.location.pathname.split('/')[2];
     const url = `/user/${userId}/report?type=custom&start_date=${startDate}&end_date=${endDate}`;
-    window.location.href = url;
+    
+    fetch(url, {
+        headers: {
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error === "No data found") {
+            closeDateRangeModal();
+            document.getElementById('noDataModal').style.display = 'block';
+        } else {
+            window.location.href = url;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        closeDateRangeModal();
+        document.getElementById('noDataModal').style.display = 'block';
+    });
 }
 
 // PDF generation

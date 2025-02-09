@@ -113,7 +113,7 @@ def add_measurements(user_id):
 def view_report(user_id):
     try:
         user = User.query.get_or_404(user_id)
-        report_type = request.args.get('type', 'today')  # Changed default to 'today'
+        report_type = request.args.get('type', 'today')
         today = date.today()
         
         if report_type == 'today':
@@ -141,8 +141,15 @@ def view_report(user_id):
             Measurement.date <= end_date
         ).order_by(Measurement.date, Measurement.time).all()
 
+        # Handle JSON request for checking data availability
+        if request.headers.get('Accept') == 'application/json':
+            if not measurements:
+                return jsonify({"error": "No data found"})
+            return jsonify({"success": True})
+
+        # Regular HTML request
         if not measurements:
-            return render_template('view_report.html', user=user, error='No data found for the chosen period')
+            return render_template('view_report.html', user=user)
 
         stats = calculate_stats(measurements)
         measurements_json = json.dumps([{
@@ -161,6 +168,8 @@ def view_report(user_id):
                              start_date=start_date,
                              end_date=end_date)
     except Exception as e:
+        if request.headers.get('Accept') == 'application/json':
+            return jsonify({"error": "Error checking data availability"}), 500
         return render_template('view_report.html', user=user, error='Error generating report')
 
 @bp.route('/user/<int:user_id>/delete', methods=['POST'])
