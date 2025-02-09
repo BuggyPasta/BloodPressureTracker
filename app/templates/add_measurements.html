@@ -4,7 +4,7 @@
     <form id="measurements-form" class="measurements-container">
         {% for i in range(1, 4) %}
         <div class="measurement-group">
-            <h3>Measurement {{ i }}</h3>
+            <h3><center>Measurement {{ i }}</center></h3>
             <div class="measurement-inputs">
                 <div class="input-group">
                     <label for="systolic_{{ i }}">Systolic:</label>
@@ -31,6 +31,11 @@
         </div>
         {% endfor %}
 
+        <!-- Message to double-check entries -->
+        <div class="confirmation-message">
+            <p><strong>Please double-check all above entries carefully before saving. Once you save these measurements, you will NOT be able to edit or delete them. Take your time to ensure you added everything correctly.</strong></p>
+        </div>
+
         <div class="action-buttons">
             <button type="submit" class="action-btn primary-btn">
                 <div class="button-content">
@@ -50,12 +55,12 @@
     <!-- Cancel Confirmation Modal -->
     <div id="cancel-modal" class="modal">
         <div class="modal-content">
-            <h2>Cancel Measurements?</h2>
-            <p>Are you sure you want to cancel? All entered measurements will be lost.</p>
+            <h2>Cancel saving these Measurements?</h2>
+            <p>Are you sure you want to cancel? If any measurements were entered, they will all be lost!</p>
             <div class="modal-buttons">
                 <button onclick="window.location.href='{{ url_for('main.user_dashboard', user_id=user.id) }}'" class="action-btn">
                     <div class="button-content">
-                        <span>Yes, cancel measurements</span>
+                        <span>Yes, cancel these measurements</span>
                     </div>
                 </button>
                 <button onclick="closeCancelModal()" class="action-btn secondary-btn">

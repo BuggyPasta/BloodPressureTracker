@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <div class="user-header centered-text">
+        <h2>Please select the date range for the Report you want to see</h2>
+        <p>Choose from pre-made ranges or use the <b>Custom range</b> button to set the desired dates yourself</p>
+    </div>
     <div class="report-selection">
         <div class="report-buttons">
             <button class="report-btn primary-btn" onclick="loadReport('today')">
