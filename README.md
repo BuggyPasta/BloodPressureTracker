@@ -50,6 +50,7 @@ Measurements are entered in batches of 3, as it is recommended by doctors that y
 ### Data Format
 CSV files must follow this format:
 
+csv
 Date,Time,Systolic,Diastolic,BPM
 05/02/2024,11:52,118,77,80
 05/02/2024,11:52,112,72,70
