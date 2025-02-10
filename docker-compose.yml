@@ -13,3 +13,5 @@ services:
       - /home/alex/docker_backup/bloodpressuretracker/config:/app/config
       - /home/alex/docker_backup/bloodpressuretracker/db:/app/db
     restart: unless-stopped
+    labels:
+      - "com.centurylinklabs.watchtower.enable=false"
