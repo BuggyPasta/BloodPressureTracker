@@ -170,7 +170,8 @@ def view_report(user_id):
                          measurements_json=measurements_json,
                          stats=stats,
                          start_date=start_date,
-                         end_date=end_date)
+                         end_date=end_date,
+                         get_bp_icon=get_bp_icon)  # Add this line
 
 @bp.route('/user/<int:user_id>/delete', methods=['POST'])
 def delete_user(user_id):
