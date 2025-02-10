@@ -131,7 +131,7 @@
     </div>
 
     <!-- Hidden form for PDF generation -->
-    <form id="pdfForm" action="{{ url_for('main.generate_pdf_report', user_id=user.id) }}" method="POST" style="display: none;">
+    <form id="pdfForm" action="{{ url_for('main.generate_pdf_report', user_id=user.id) }}" method="POST" target="_blank" style="display: none;">
         <input type="hidden" name="start_date" id="pdfStartDate">
         <input type="hidden" name="end_date" id="pdfEndDate">
     </form>
