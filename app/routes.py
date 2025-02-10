@@ -111,66 +111,66 @@ def add_measurements(user_id):
 
 @bp.route('/user/<int:user_id>/report')
 def view_report(user_id):
-    try:
-        user = User.query.get_or_404(user_id)
-        report_type = request.args.get('type', 'today')
-        today = date.today()
-        
-        if report_type == 'today':
-            start_date = today
-            end_date = today
-        elif report_type == 'last_7_days':
-            end_date = today
-            start_date = end_date - timedelta(days=7)
-        elif report_type == 'last_week':
-            end_date = today - timedelta(days=today.weekday() + 1)
-            start_date = end_date - timedelta(days=6)
-        elif report_type == 'last_30_days':
-            end_date = today
-            start_date = end_date - timedelta(days=30)
-        else:  # custom_range
-            try:
-                start_date = datetime.strptime(request.args.get('start_date'), '%d/%m/%Y').date()
-                end_date = datetime.strptime(request.args.get('end_date'), '%d/%m/%Y').date()
-            except (ValueError, TypeError):
-                return render_template('view_report.html', user=user, error='Invalid date format')
+    user = User.query.get_or_404(user_id)
+    report_type = request.args.get('type', 'today')
+    
+    # Calculate date range based on report type
+    end_date = datetime.now().date()
+    if report_type == 'today':
+        start_date = end_date
+    elif report_type == 'last_7_days':
+        start_date = end_date - timedelta(days=6)
+    elif report_type == 'last_week':
+        end_date = end_date - timedelta(days=end_date.weekday())
+        start_date = end_date - timedelta(days=6)
+    elif report_type == 'last_30_days':
+        start_date = end_date - timedelta(days=29)
+    elif report_type == 'custom':
+        try:
+            start_date = datetime.strptime(request.args.get('start_date'), '%d/%m/%Y').date()
+            end_date = datetime.strptime(request.args.get('end_date'), '%d/%m/%Y').date()
+        except (ValueError, TypeError):
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return jsonify({'error': 'Invalid date format'})
+            flash('Invalid date format')
+            return redirect(url_for('main.user_dashboard', user_id=user_id))
 
-        measurements = Measurement.query.filter(
-            Measurement.user_id == user_id,
-            Measurement.date >= start_date,
-            Measurement.date <= end_date
-        ).order_by(Measurement.date, Measurement.time).all()
+    # Get measurements for the date range
+    measurements = Measurement.query.filter(
+        Measurement.user_id == user_id,
+        Measurement.date >= start_date,
+        Measurement.date <= end_date
+    ).order_by(Measurement.date).all()
 
-        # Handle JSON request for checking data availability
-        if request.headers.get('Accept') == 'application/json':
-            if not measurements:
-                return jsonify({"error": "No data found"})
-            return jsonify({"success": True})
-
-        # Regular HTML request
+    # If it's an AJAX request, return JSON response
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         if not measurements:
-            return render_template('view_report.html', user=user)
+            return jsonify({'error': 'No data found'})
+        return jsonify({'success': True})
 
-        stats = calculate_stats(measurements)
-        measurements_json = json.dumps([{
-            'date': m.date.strftime('%d/%m/%Y'),
-            'time': m.time.strftime('%H:%M'),
-            'systolic': m.systolic,
-            'diastolic': m.diastolic,
-            'bpm': m.bpm
-        } for m in measurements])
+    # For regular requests, return the full page
+    if not measurements:
+        flash('No data found for the selected period')
+        return redirect(url_for('main.user_dashboard', user_id=user_id))
 
-        return render_template('view_report.html',
-                             user=user,
-                             measurements=measurements,
-                             measurements_json=measurements_json,
-                             stats=stats,
-                             start_date=start_date,
-                             end_date=end_date)
-    except Exception as e:
-        if request.headers.get('Accept') == 'application/json':
-            return jsonify({"error": "Error checking data availability"}), 500
-        return render_template('view_report.html', user=user, error='Error generating report')
+    # Calculate statistics
+    stats = calculate_stats(measurements)
+    
+    # Prepare data for the chart
+    measurements_json = json.dumps([{
+        'date': m.date.strftime('%d/%m/%Y'),
+        'systolic': m.systolic,
+        'diastolic': m.diastolic,
+        'bpm': m.bpm
+    } for m in measurements])
+
+    return render_template('view_report.html', 
+                         user=user,
+                         measurements=measurements,
+                         measurements_json=measurements_json,
+                         stats=stats,
+                         start_date=start_date,
+                         end_date=end_date)
 
 @bp.route('/user/<int:user_id>/delete', methods=['POST'])
 def delete_user(user_id):

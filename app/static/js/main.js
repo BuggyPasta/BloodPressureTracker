@@ -181,24 +181,28 @@ function closeCancelModal() {
 // Report loading functions
 function loadReport(type) {
     const userId = window.location.pathname.split('/')[2];
-    let url = `/user/${userId}/report?type=${type}`;
+    const url = `/user/${userId}/report?type=${type}`;
+    
+    console.log('Attempting to load report:', url); // Add logging
     
     fetch(url, {
         headers: {
-            'Accept': 'application/json'
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
         }
     })
     .then(response => {
+        console.log('Response status:', response.status); // Add logging
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
         return response.json();
     })
     .then(data => {
+        console.log('Response data:', data); // Add logging
         if (data.error) {
             document.getElementById('noDataModal').style.display = 'block';
         } else {
-            // Remove the Accept header for the actual navigation
             window.location.href = url;
         }
     })
