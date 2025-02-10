@@ -61,22 +61,6 @@ Easiest way is to create a user, add a first set of measurements, export a CSV a
 - Time format: HH:MM
 - Values must be within valid ranges (30-230)
 
-## Technical Details
-
-### Built With
-- Python/Flask
-- SQLAlchemy
-- ReportLab (PDF generation)
-- JavaScript/jQuery
-- Bootstrap 5
-
-### Requirements
-- Python 3.x
-- Flask
-- SQLAlchemy
-- ReportLab
-- Other dependencies listed in requirements.txt
-
 ### Blood Pressure Categories
 
 #### Systolic (mmHg)
