@@ -80,6 +80,16 @@ document.addEventListener('DOMContentLoaded', function() {
         measurementsForm.addEventListener('submit', submitMeasurements);
     }
 
+    // Add CSV upload handler
+    const csvUpload = document.getElementById('csv-upload');
+    if (csvUpload) {
+        csvUpload.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const userId = window.location.pathname.split('/')[2];
+            uploadCSV(userId, file);
+        });
+    }
+
     // Close modals when clicking outside
     window.addEventListener('click', function(event) {
         const modals = document.getElementsByClassName('modal');
@@ -164,6 +174,42 @@ function applyDateRange() {
     const userId = window.location.pathname.split('/')[2];
     const url = `/user/${userId}/report?type=custom&start_date=${startDate}&end_date=${endDate}`;
     window.location.href = url;
+}
+
+// CSV upload function
+function uploadCSV(userId, file) {
+    if (!file) return;
+    
+    if (!file.name.endsWith('.csv')) {
+        document.getElementById('csv-error-message').textContent = 'Please select a CSV file';
+        document.getElementById('csv-error-modal').style.display = 'block';
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    fetch(`/user/${userId}/import_csv`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            document.getElementById('csv-error-message').textContent = data.error;
+            document.getElementById('csv-error-modal').style.display = 'block';
+        } else {
+            document.getElementById('csv-success-message').textContent = data.message;
+            document.getElementById('csv-success-modal').style.display = 'block';
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
+        }
+    })
+    .catch(error => {
+        document.getElementById('csv-error-message').textContent = 'An error occurred while uploading the file';
+        document.getElementById('csv-error-modal').style.display = 'block';
+    });
 }
 
 // PDF generation

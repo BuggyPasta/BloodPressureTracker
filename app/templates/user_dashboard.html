@@ -35,8 +35,7 @@
                 <span>Import from CSV</span>
             </div>
         </button>
-        <input type="file" id="csv-upload" accept=".csv" style="display: none;" 
-               onchange="uploadCSV({{ user.id }}, this.files[0])">
+        <input type="file" id="csv-upload" accept=".csv" style="display: none;">
         
         <button onclick="confirmDelete({{ user.id }})" class="action-btn delete-btn">
             <div class="button-content">
@@ -123,40 +122,4 @@
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-<script>
-function uploadCSV(userId, file) {
-    if (!file) return;
-    
-    if (!file.name.endsWith('.csv')) {
-        document.getElementById('csv-error-message').textContent = 'Please select a CSV file';
-        document.getElementById('csv-error-modal').style.display = 'block';
-        return;
-    }
-
-    const formData = new FormData();
-    formData.append('file', file);
-
-    fetch(`/user/${userId}/import_csv`, {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.error) {
-            document.getElementById('csv-error-message').textContent = data.error;
-            document.getElementById('csv-error-modal').style.display = 'block';
-        } else {
-            document.getElementById('csv-success-message').textContent = data.message;
-            document.getElementById('csv-success-modal').style.display = 'block';
-            setTimeout(() => {
-                window.location.reload();
-            }, 2000);
-        }
-    })
-    .catch(error => {
-        document.getElementById('csv-error-message').textContent = 'An error occurred while uploading the file';
-        document.getElementById('csv-error-modal').style.display = 'block';
-    });
-}
-</script>
 {% endblock %}
