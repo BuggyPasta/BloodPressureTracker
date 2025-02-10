@@ -1,6 +1,8 @@
 # Blood Pressure Monitor
 
-A web application for tracking and managing blood pressure measurements, built with Flask.
+A web application for tracking and managing blood pressure measurements, built with Flask. Just created this as my doctor asked me to monitor my blood pressure for some time and report back, and I didn't want to use my blood pressure monitor's app for privacy reasons. Works with ANY blood pressure monitor because you just input your measurements to the app manually. Comes with easy Light/Dark mode switching.
+
+Measurements are entered in batches of 3, as it is recommended by doctors that you take 3 measurements every time you take your blood pressure and use their average.
 
 ## Features
 
@@ -100,14 +102,11 @@ Easiest way is to create a user, add a first set of measurements, export a CSV a
 ## License
 AGPL-3.0 license
 
-## Contributing
-Do as you like!
-
 ## Authors
-Buggy Pasta, with the help of A.I. because he is otherwise worthless in programming
+BuggyPasta, with lots of help from A.I. because BuggyPasta is otherwise WORTHLESS in programming
 
 ## Acknowledgments
-- Vectors and icons by <a href="https://www.figma.com/@maryakveo?ref=svgrepo.com" target="_blank">Mary Akveo</a> in PD License via <a href="https://www.svgrepo.com/" target="_blank">SVG Repo</a>
+Vectors and icons by <a href="https://www.figma.com/@maryakveo?ref=svgrepo.com" target="_blank">Mary Akveo</a> in PD License via <a href="https://www.svgrepo.com/" target="_blank">SVG Repo</a>
 
 ## Docker Installation
 
@@ -127,7 +126,7 @@ services:
       context: https://github.com/BuggyPasta/BloodPressureTracker.git
       dockerfile: Dockerfile
     ports:
-      - "2025:5000"
+      - "5000:5000"
     volumes:
       - /home/YOUR_USER_FOLDER/bloodpressuretracker/data:/app/data
       - /home/YOUR_USER_FOLDER/bloodpressuretracker/config:/app/config
@@ -136,3 +135,18 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=false"
 ```
+
+## Future development
+None planned, which is why you see in the docker compose above the 2 last lines instructing Watchtower to not bother checking for any updates. If you are not running Watchtower, feel free to remove them.
+
+
+## IMPORTANT NOTE:
+This app is designed to work ONLY ON A LOCAL environment and is NOT secured in any way to work exposed to the Internet. As it will contain sensitive personal data, remember that you Use it at your own risk and DO NOT EXPOSE it publically. Also, make sure you read the DISCLAIMER below
+
+## DISCLAIMER
+
+This application is intended for informational and personal tracking purposes only. It is not a medical device and does not provide medical advice, diagnosis, or treatment. The information presented, including calculations and trends, MAY NOT be accurate or reliable and should NOT be used as a substitute for professional medical advice from a qualified healthcare provider.
+
+There is absolutely NO guarantee that the calculations, averages, or any other data provided by this application are correct. Always consult with your doctor or healthcare professional regarding any questions or concerns about your health or medical condition. Do NOT rely on this application for medical decisions or emergencies.
+
+The developer(s) of this application are not responsible for any inaccuracies, misinterpretations, or misuse of the information provided. By using this application, you acknowledge that you automatically assume full and exclusive responsibility for your health decisions and agree that the developer(s) shall not be held liable for any consequences arising from your use of this application.
