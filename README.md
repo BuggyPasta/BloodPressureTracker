@@ -55,7 +55,7 @@ Date,Time,Systolic,Diastolic,BPM
 05/02/2024,11:52,118,77,80
 05/02/2024,11:52,112,72,70
 
-Easiest way is to create a user, add a first set of measurements, export a CSV and follow the same pattern to create a new CSV to import.
+Easiest way is to create a user, add a first set of measurements, export a CSV, then open that in Excel to understant the formatting you need to create a new CSV to import.
 
 - Date format: DD/MM/YYYY
 - Time format: HH:MM
