@@ -45,10 +45,6 @@
                 <p>Age: {{ user.get_age() }} years</p>
             </div>
 
-            <div class="chart-container">
-                <canvas id="bpChart"></canvas>
-            </div>
-
             <div class="stats-container">
                 <div class="stat-group">
                     <h3>Systolic (mm Hg)</h3>
@@ -83,16 +79,10 @@
             </div>
 
             <div class="action-buttons">
-                <button onclick="printReport()" class="action-btn primary-btn">
+                <button onclick="printReport()" class="action-btn primary-btn full-width">
                     <div class="button-content">
                         <img src="{{ url_for('static', filename='icons/print.svg') }}" alt="Print">
                         <span>Print Report</span>
-                    </div>
-                </button>
-                <button onclick="window.location.href='{{ url_for('main.user_dashboard', user_id=user.id) }}'" class="action-btn secondary-btn">
-                    <div class="button-content">
-                        <img src="{{ url_for('static', filename='icons/home.svg') }}" alt="Home">
-                        <span>Back to Home</span>
                     </div>
                 </button>
             </div>
@@ -163,13 +153,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script>
-    {% if measurements %}
-        const measurementData = {{ measurements_json|safe }};
-    {% endif %}
-</script>
 <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 {% endblock %}

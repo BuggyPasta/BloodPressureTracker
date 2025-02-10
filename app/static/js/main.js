@@ -74,11 +74,6 @@ document.addEventListener('DOMContentLoaded', function() {
         flatpickr("#date_of_birth", dateConfig);
     }
 
-    // Initialize chart if we're on the report page and have data
-    if (typeof measurementData !== 'undefined' && document.getElementById('bpChart')) {
-        initializeChart();
-    }
-
     // Add measurements form handling
     const measurementsForm = document.getElementById('measurements-form');
     if (measurementsForm) {
@@ -105,46 +100,6 @@ function updateThemeIcon(theme) {
             : '/static/icons/mode_light.svg';
         themeIcon.alt = theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode';
     }
-}
-
-// Chart initialization
-function initializeChart() {
-    const ctx = document.getElementById('bpChart').getContext('2d');
-    const dates = measurementData.map(m => m.date);
-    const systolic = measurementData.map(m => m.systolic);
-    const diastolic = measurementData.map(m => m.diastolic);
-
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: dates,
-            datasets: [
-                {
-                    label: 'Systolic',
-                    data: systolic,
-                    borderColor: '#FF6384',
-                    fill: false
-                },
-                {
-                    label: 'Diastolic',
-                    data: diastolic,
-                    borderColor: '#36A2EB',
-                    fill: false
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: false,
-                    min: Math.min(...diastolic) - 10,
-                    max: Math.max(...systolic) + 10
-                }
-            }
-        }
-    });
 }
 
 // Measurements form handling
@@ -182,23 +137,7 @@ function closeCancelModal() {
 function loadReport(type) {
     const userId = window.location.pathname.split('/')[2];
     const url = `/user/${userId}/report?type=${type}`;
-    
-    fetch(url, {
-        headers: {
-            'Accept': 'application/json'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.error) {
-            document.getElementById('noDataModal').style.display = 'block';
-        } else {
-            window.location.href = url;
-        }
-    })
-    .catch(error => {
-        document.getElementById('noDataModal').style.display = 'block';
-    });
+    window.location.href = url;
 }
 
 function showDateRangeModal() {
@@ -224,39 +163,26 @@ function applyDateRange() {
 
     const userId = window.location.pathname.split('/')[2];
     const url = `/user/${userId}/report?type=custom&start_date=${startDate}&end_date=${endDate}`;
-    
-    fetch(url, {
-        headers: {
-            'Accept': 'application/json'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.error === "No data found") {
-            closeDateRangeModal();
-            document.getElementById('noDataModal').style.display = 'block';
-        } else {
-            window.location.href = url;
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        closeDateRangeModal();
-        document.getElementById('noDataModal').style.display = 'block';
-    });
+    window.location.href = url;
 }
 
 // PDF generation
-function generatePDFReport() {
+function printReport() {
     const form = document.getElementById('pdfForm');
     const startDate = document.getElementById('pdfStartDate');
     const endDate = document.getElementById('pdfEndDate');
     
-    // Set current date range
-    startDate.value = new URLSearchParams(window.location.search).get('start_date');
-    endDate.value = new URLSearchParams(window.location.search).get('end_date');
+    // Get dates from the report header
+    const reportHeader = document.querySelector('.report-container h2').textContent;
+    const dates = reportHeader.match(/(\d{2}\/\d{2}\/\d{4})/g);
     
-    form.submit();
+    if (dates && dates.length >= 2) {
+        startDate.value = dates[0];
+        endDate.value = dates[1];
+        form.submit();
+    } else {
+        alert('Error: Could not determine report dates');
+    }
 }
 
 // User deletion confirmation
@@ -302,9 +228,4 @@ function finalizeDelete(userId) {
     .catch(error => {
         alert('An error occurred while deleting the user');
     });
-}
-
-// Print functionality
-function printReport() {
-    generatePDFReport();
 }

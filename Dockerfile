@@ -1,14 +1,10 @@
 FROM python:3.11-slim
 
-# Install system dependencies
+# Install system dependencies (removed some that were only needed for matplotlib)
 RUN apt-get update && apt-get install -y \
     gcc \
     libc-dev \
     libffi-dev \
-    libfreetype-dev \
-    libpng-dev \
-    pkg-config \
-    python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app

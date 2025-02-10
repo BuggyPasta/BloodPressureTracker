@@ -4,13 +4,8 @@ from datetime import datetime, timedelta, date
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import cm
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.graphics.shapes import Drawing
-from reportlab.graphics.charts.linecharts import HorizontalLineChart
-from io import BytesIO
-import matplotlib.pyplot as plt
-import base64
 import csv
 import json
 import io
@@ -148,30 +143,16 @@ def view_report(user_id):
             return jsonify({'error': 'No data found'})
         return jsonify({'success': True})
 
-    # For regular requests, return the full page
-    if not measurements:
-        flash('No data found for the selected period')
-        return redirect(url_for('main.user_dashboard', user_id=user_id))
-
     # Calculate statistics
     stats = calculate_stats(measurements)
-    
-    # Prepare data for the chart
-    measurements_json = json.dumps([{
-        'date': m.date.strftime('%d/%m/%Y'),
-        'systolic': m.systolic,
-        'diastolic': m.diastolic,
-        'bpm': m.bpm
-    } for m in measurements])
 
     return render_template('view_report.html', 
                          user=user,
                          measurements=measurements,
-                         measurements_json=measurements_json,
                          stats=stats,
                          start_date=start_date,
                          end_date=end_date,
-                         get_bp_icon=get_bp_icon)  # Add this line
+                         get_bp_icon=get_bp_icon)
 
 @bp.route('/user/<int:user_id>/delete', methods=['POST'])
 def delete_user(user_id):
@@ -315,27 +296,6 @@ def generate_pdf_report(user_id):
         elements.append(Paragraph(f"Age: {user.get_age()} years", normal_style))
         elements.append(Spacer(1, 20))
 
-        # Generate chart with proper cleanup
-        plt.figure(figsize=(8, 4))
-        try:
-            dates = [m.date for m in measurements]
-            systolic = [m.systolic for m in measurements]
-            diastolic = [m.diastolic for m in measurements]
-            
-            plt.plot(dates, systolic, label='Systolic', color='#FF6384')
-            plt.plot(dates, diastolic, label='Diastolic', color='#36A2EB')
-            plt.legend()
-            plt.xticks(rotation=45)
-            plt.tight_layout()
-            
-            chart_buffer = BytesIO()
-            plt.savefig(chart_buffer, format='png')
-            chart_buffer.seek(0)
-            elements.append(Image(chart_buffer, width=400, height=200))
-            elements.append(Spacer(1, 20))
-        finally:
-            plt.close('all')  # Ensure figure is closed even if error occurs
-
         # Add statistics
         stats = calculate_stats(measurements)
         stats_data = [
@@ -388,8 +348,6 @@ def generate_pdf_report(user_id):
     except Exception as e:
         print(f"Error generating PDF: {str(e)}")  # For development
         return jsonify({'error': 'Failed to generate PDF report'}), 500
-    finally:
-        plt.close('all')  # Cleanup any remaining matplotlib resources
 
 def calculate_stats(measurements):
     try:
