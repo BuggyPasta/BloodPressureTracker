@@ -68,14 +68,14 @@ Easiest way is to create a user, add a first set of measurements, export a CSV, 
 - 90-119: Optimal
 - 120-129: Normal
 - 130-139: High Normal
-- >= 140: High
+- => 140: High
 
 #### Diastolic (mmHg)
 - < 60: Low
 - 60-79: Optimal
 - 80-84: Normal
 - 85-89: High Normal
-- >= 90: High
+- => 90: High
 
 ## Security
 - Input validation for all form submissions
@@ -124,8 +124,8 @@ services:
 None planned, which is why you see in the docker compose above the 2 last lines instructing Watchtower to not bother checking for any updates. If you are not running Watchtower, feel free to remove them.
 
 
-## IMPORTANT NOTE:
-This app is designed to work ONLY ON A LOCAL environment and is NOT secured in any way to work exposed to the Internet. As it will contain sensitive personal data, remember that you use it at your own risk. I STRONGLY recommend that you DO NOT EXPOSE it publically. Also, make sure you read the DISCLAIMER below
+## VERY IMPORTANT NOTE. NO, SERIOUSLY.
+This app is designed to work ONLY ON A LOCAL environment and is NOT secured in any way to work exposed to the Internet. As it will contain sensitive personal data, remember that you use it at your own risk. I STRONGLY recommend that you DO NOT EXPOSE it publically. Also, make sure you read the DISCLAIMER below.
 
 ## DISCLAIMER
 
