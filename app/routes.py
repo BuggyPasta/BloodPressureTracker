@@ -140,25 +140,53 @@ def view_report(user_id):
             flash('Invalid date format')
             return redirect(url_for('main.user_dashboard', user_id=user_id))
 
-    # Get measurements for the date range
+    # Get measurements and group by date/time
     measurements = Measurement.query.filter(
         Measurement.user_id == user_id,
         Measurement.date >= start_date,
         Measurement.date <= end_date
-    ).order_by(Measurement.date).all()
+    ).order_by(Measurement.date, Measurement.time).all()
+
+    # Group measurements by date and time
+    grouped_measurements = {}
+    for m in measurements:
+        key = (m.date, m.time)
+        if key not in grouped_measurements:
+            grouped_measurements[key] = []
+        grouped_measurements[key].append(m)
+
+    # Calculate averages for each group
+    averaged_measurements = []
+    for (date, time), group in grouped_measurements.items():
+        avg_systolic = round(sum(m.systolic for m in group) / len(group))
+        avg_diastolic = round(sum(m.diastolic for m in group) / len(group))
+        avg_bpm = round(sum(m.bpm for m in group) / len(group))
+        
+        avg_measurement = Measurement(
+            user_id=user_id,
+            date=date,
+            time=time,
+            systolic=avg_systolic,
+            diastolic=avg_diastolic,
+            bpm=avg_bpm
+        )
+        averaged_measurements.append(avg_measurement)
+
+    # Sort the averaged measurements
+    averaged_measurements.sort(key=lambda m: (m.date, m.time))
 
     # If it's an AJAX request, return JSON response
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        if not measurements:
+        if not averaged_measurements:
             return jsonify({'error': 'No data found'})
         return jsonify({'success': True})
 
-    # Calculate statistics
-    stats = calculate_stats(measurements) if measurements else None
+    # Calculate statistics using averaged measurements
+    stats = calculate_stats(averaged_measurements) if averaged_measurements else None
 
     return render_template('view_report.html', 
                          user=user,
-                         measurements=measurements,
+                         measurements=averaged_measurements,
                          stats=stats,
                          start_date=start_date,
                          end_date=end_date,
@@ -261,13 +289,42 @@ def generate_pdf_report(user_id):
         start_date = datetime.strptime(request.form['start_date'], '%d/%m/%Y').date()
         end_date = datetime.strptime(request.form['end_date'], '%d/%m/%Y').date()
         
+        # Get measurements and group by date/time
         measurements = Measurement.query.filter(
             Measurement.user_id == user_id,
             Measurement.date >= start_date,
             Measurement.date <= end_date
         ).order_by(Measurement.date, Measurement.time).all()
+
+        # Group measurements by date and time
+        grouped_measurements = {}
+        for m in measurements:
+            key = (m.date, m.time)
+            if key not in grouped_measurements:
+                grouped_measurements[key] = []
+            grouped_measurements[key].append(m)
+
+        # Calculate averages for each group
+        averaged_measurements = []
+        for (date, time), group in grouped_measurements.items():
+            avg_systolic = round(sum(m.systolic for m in group) / len(group))
+            avg_diastolic = round(sum(m.diastolic for m in group) / len(group))
+            avg_bpm = round(sum(m.bpm for m in group) / len(group))
+            
+            avg_measurement = Measurement(
+                user_id=user_id,
+                date=date,
+                time=time,
+                systolic=avg_systolic,
+                diastolic=avg_diastolic,
+                bpm=avg_bpm
+            )
+            averaged_measurements.append(avg_measurement)
+
+        # Sort the averaged measurements
+        averaged_measurements.sort(key=lambda m: (m.date, m.time))
         
-        if not measurements:
+        if not averaged_measurements:
             return jsonify({'error': 'No data found for the chosen period'}), 404
 
         buffer = BytesIO()
@@ -307,7 +364,7 @@ def generate_pdf_report(user_id):
         elements.append(Spacer(1, 20))
 
         # Add statistics
-        stats = calculate_stats(measurements)
+        stats = calculate_stats(averaged_measurements)
         stats_data = [
             ['', 'Minimum', 'Maximum', 'Average'],
             ['Systolic', stats['systolic']['min'], stats['systolic']['max'], stats['systolic']['avg']],
@@ -326,9 +383,9 @@ def generate_pdf_report(user_id):
         elements.append(stats_table)
         elements.append(Spacer(1, 20))
 
-        # Add measurements table
+        # Add measurements table using averaged measurements
         table_data = [['Date', 'Time', 'Systolic', 'Diastolic', 'BPM']]
-        for m in measurements:
+        for m in averaged_measurements:
             table_data.append([
                 m.date.strftime('%d/%m/%Y'),
                 m.time.strftime('%H:%M'),
