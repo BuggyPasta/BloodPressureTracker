@@ -1,3 +1,4 @@
+from io import BytesIO
 from flask import Blueprint, render_template, request, jsonify, redirect, url_for, flash, send_file, Response
 from .models import db, User, Measurement
 from datetime import datetime, timedelta, date
@@ -107,7 +108,16 @@ def add_measurements(user_id):
 @bp.route('/user/<int:user_id>/report')
 def view_report(user_id):
     user = User.query.get_or_404(user_id)
-    report_type = request.args.get('type', 'today')
+    report_type = request.args.get('type')
+    
+    # If no report type is specified, just show the selection screen
+    if not report_type:
+        return render_template('view_report.html', 
+                             user=user,
+                             measurements=None,
+                             stats=None,
+                             start_date=None,
+                             end_date=None)
     
     # Calculate date range based on report type
     end_date = datetime.now().date()
@@ -144,7 +154,7 @@ def view_report(user_id):
         return jsonify({'success': True})
 
     # Calculate statistics
-    stats = calculate_stats(measurements)
+    stats = calculate_stats(measurements) if measurements else None
 
     return render_template('view_report.html', 
                          user=user,

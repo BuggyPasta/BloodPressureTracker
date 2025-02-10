@@ -88,14 +88,6 @@ main {
 }
 
 /* Button Styles */
-.action-buttons {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-    margin: 2rem 0;
-    width: 100%;
-}
-
 .button-content {
     display: flex;
     flex-direction: column;
@@ -315,19 +307,6 @@ input[type="password"]:focus {
     margin-left: 0.5rem;
 }
 
-/* Bottom Home Button */
-.bottom-home-button {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    margin-top: 2rem;
-}
-
-.bottom-home-button .action-btn {
-    flex: 1;
-    max-width: 300px;
-}
-
 /* Footer Styles */
 footer {
     background-color: var(--background-color);
@@ -376,6 +355,33 @@ footer {
     text-decoration: underline;
     font-size: 1rem;
     padding: 0.5rem;
+}
+
+/* Action Buttons and Bottom Home Button Updated Styles */
+.action-buttons {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin: 2rem 0;
+    width: 100%;
+}
+
+.full-width {
+    grid-column: 1 / -1;
+    max-width: none !important;
+}
+
+.bottom-home-button {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+    width: 100%;
+}
+
+.bottom-home-button .action-btn {
+    max-width: none;
 }
 
 /* Responsive Design */
