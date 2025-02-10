@@ -30,11 +30,11 @@ A web application for tracking and managing blood pressure measurements, built w
   - Maximum values
   - Average values
 - Visual indicators for blood pressure categories:
-  - ?? Optimal
-  - ?? Normal
-  - ?? High Normal
-  - ?? High
-  - ?? Very High
+  - Optimal
+  - Normal
+  - High Normal
+  - High
+  - Very High
 
 ### Data Management
 - Export measurements to CSV file
@@ -52,6 +52,8 @@ csv
 Date,Time,Systolic,Diastolic,BPM
 05/02/2024,11:52,118,77,80
 05/02/2024,11:52,112,72,70
+
+Easiest way is to create a user, add a first set of measurements, export a CSV and follow the same pattern to create a new CSV to import.
 
 - Date format: DD/MM/YYYY
 - Time format: HH:MM
@@ -96,7 +98,7 @@ Date,Time,Systolic,Diastolic,BPM
 - Error handling for all operations
 
 ## License
-[Your chosen license]
+AGPL-3.0 license
 
 ## Contributing
 Do as you like!
@@ -115,6 +117,7 @@ Buggy Pasta, with the help of A.I. because he is otherwise worthless in programm
 
 ### Installation with Docker Compose
 
+```yaml
 version: '3.8'
 
 services:
@@ -132,3 +135,4 @@ services:
     restart: unless-stopped
     labels:
       - "com.centurylinklabs.watchtower.enable=false"
+```
