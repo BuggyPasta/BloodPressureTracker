@@ -5,6 +5,7 @@ import os
 def create_app():
     app = Flask(__name__)
     app.secret_key = os.urandom(24)
+    app.config['PREFERRED_URL_SCHEME'] = 'http'
 
     # Ensure data directories exist
     os.makedirs('db', exist_ok=True)
