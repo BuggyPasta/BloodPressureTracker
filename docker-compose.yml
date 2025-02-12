@@ -7,11 +7,11 @@ services:
       context: https://github.com/BuggyPasta/BloodPressureTracker.git
       dockerfile: Dockerfile
     ports:
-      - "2025:5000"
+      - "5000:5000"
     volumes:
-      - /home/alex/docker_backup/bloodpressuretracker/data:/app/data
-      - /home/alex/docker_backup/bloodpressuretracker/config:/app/config
-      - /home/alex/docker_backup/bloodpressuretracker/db:/app/db
+      - /home/YOUR_USER_FOLDER/bloodpressuretracker/data:/app/data
+      - /home/YOUR_USER_FOLDER/bloodpressuretracker/config:/app/config
+      - /home/YOUR_USER_FOLDER/bloodpressuretracker/db:/app/db
     restart: unless-stopped
     labels:
       - "com.centurylinklabs.watchtower.enable=false"
