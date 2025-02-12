@@ -93,6 +93,7 @@ main {
     flex-direction: column;
     align-items: center;
     gap: 0.8rem;
+    padding: 0.8rem;
 }
 
 .action-btn {
@@ -167,15 +168,15 @@ main {
 }
 
 .user-name {
-    font-size: 1.3rem;
+    font-size: 1.5rem;
     margin-bottom: 0.3rem;
 }
 
 .user-details {
-    font-size: 0.9rem;
-    color: var(--text-color);
+    font-size: 1rem;
     opacity: 0.9;
     margin: 0;
+    line-height: 0.30rem;
 }
 
 .user-button {
@@ -436,8 +437,8 @@ footer {
     }
 
     .action-btn img {
-        width: 36px;
-        height: 36px;
+        width: 50px;
+        height: 50px;
     }
 
     .measurement-inputs {
