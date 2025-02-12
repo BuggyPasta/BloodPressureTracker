@@ -21,7 +21,7 @@
 }
 
 body {
-    font-family: Arial, sans-serif;
+    font-family: Calibri, sans-serif;
     line-height: 1.6;
     color: var(--text-color);
     background-color: var(--background-color);
@@ -34,17 +34,20 @@ body {
 h1 {
     font-size: 2.5rem;
     margin-bottom: 1rem;
+    letter-spacing: -2px;
 }
 
 h2 {
     font-size: 2rem;
     margin-bottom: 1.5rem;
     text-align: center;
+    letter-spacing: -1px;
 }
 
 h3 {
     font-size: 1.5rem;
     margin-bottom: 1rem;
+    letter-spacing: -2px;
 }
 
 p {
@@ -102,6 +105,7 @@ main {
     justify-content: center;
     padding: 1.2rem;
     font-size: 1.2rem;
+    font-weight: bold;
     background-color: var(--primary-color);
     color: white;
     border: none;
@@ -323,6 +327,7 @@ input[type="password"]:focus {
 .report-btn {
     padding: 1rem;
     font-size: 1.1rem;
+    font-weight: bold;
     background-color: var(--primary-color);
     color: white;
     border: none;
@@ -420,6 +425,7 @@ footer {
     .logo-title h1 {
         line-height: 1.2;
         font-size: 2rem;
+        letter-spacing: -2px;
     }
 
     .action-buttons,
@@ -435,6 +441,7 @@ footer {
     .action-btn {
         padding: 1.5rem;
         font-size: 1.3rem;
+        font-weight: bold;
     }
 
     .action-btn img {
