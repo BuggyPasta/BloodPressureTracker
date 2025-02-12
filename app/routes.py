@@ -334,7 +334,7 @@ def generate_pdf_report(user_id):
             rightMargin=1.5*cm,
             leftMargin=1.5*cm,
             topMargin=1.5*cm,
-            bottomMargin=1.5*cm
+            bottomMargin=1.5*cm,
             title=f'Blood Pressure Report - {user.first_name} {user.last_name}'  # Add PDF title
         )
 
