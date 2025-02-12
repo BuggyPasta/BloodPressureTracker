@@ -5,6 +5,7 @@
         <h2>Please select the date range for the Report you want to see</h2>
         <p>Choose from pre-made ranges or use the <b>Custom range</b> button to set the desired dates yourself</p>
     </div>
+
     <div class="report-selection">
         <div class="report-buttons">
             <button class="report-btn primary-btn" onclick="loadReport('today')">
@@ -12,19 +13,9 @@
                     <span>Today</span>
                 </div>
             </button>
-            <button class="report-btn primary-btn" onclick="loadReport('last_7_days')">
+            <button class="report-btn primary-btn" onclick="loadReport('last_10_days')">
                 <div class="button-content">
-                    <span>Last 7 days</span>
-                </div>
-            </button>
-            <button class="report-btn primary-btn" onclick="loadReport('last_week')">
-                <div class="button-content">
-                    <span>Last week</span>
-                </div>
-            </button>
-            <button class="report-btn primary-btn" onclick="loadReport('last_30_days')">
-                <div class="button-content">
-                    <span>Last 30 days</span>
+                    <span>Last 10 days</span>
                 </div>
             </button>
             <button class="report-btn primary-btn" onclick="showDateRangeModal()">

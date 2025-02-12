@@ -335,35 +335,46 @@ def generate_pdf_report(user_id):
             leftMargin=1.5*cm,
             topMargin=1.5*cm,
             bottomMargin=1.5*cm
+            title=f'Blood Pressure Report - {user.first_name} {user.last_name}'  # Add PDF title
         )
 
         styles = getSampleStyleSheet()
+        # Center-aligned title style
         title_style = ParagraphStyle(
             'CustomTitle',
             parent=styles['Heading1'],
-            fontSize=14,
-            spaceAfter=30
+            fontSize=16,
+            alignment=1,  # 1 = center
+            spaceAfter=20
         )
-        normal_style = styles['Normal']
-        normal_style.fontSize = 12
-        table_style = ParagraphStyle(
-            'CustomTable',
+        
+        # Style for user info
+        info_style = ParagraphStyle(
+            'InfoStyle',
             parent=styles['Normal'],
-            fontSize=11
+            fontSize=12,
+            alignment=1,  # Center-aligned
+            spaceAfter=5
         )
 
         elements = []
         
+        # Center-aligned title
         elements.append(Paragraph(
-            f"Blood Pressure History for the period {start_date.strftime('%d/%m/%Y')} to {end_date.strftime('%d/%m/%Y')}",
+            f"Blood Pressure History<br/>{start_date.strftime('%d/%m/%Y')} to {end_date.strftime('%d/%m/%Y')}",
             title_style
         ))
-        elements.append(Paragraph(f"{user.first_name} {user.last_name}", normal_style))
-        elements.append(Paragraph(f"DOB: {user.date_of_birth.strftime('%d %B %Y')}", normal_style))
-        elements.append(Paragraph(f"Age: {user.get_age()} years", normal_style))
-        elements.append(Spacer(1, 20))
+        
+        # User info on one line with separators
+        elements.append(Paragraph(
+            f"{user.first_name} {user.last_name} | "
+            f"DOB: {user.date_of_birth.strftime('%d %B %Y')} | "
+            f"Age: {user.get_age()} years",
+            info_style
+        ))
+        elements.append(Spacer(1, 30))
 
-        # Add statistics
+        # Statistics table with improved formatting
         stats = calculate_stats(averaged_measurements)
         stats_data = [
             ['', 'Minimum', 'Maximum', 'Average'],
@@ -372,18 +383,20 @@ def generate_pdf_report(user_id):
             ['BPM', stats['bpm']['min'], stats['bpm']['max'], stats['bpm']['avg']]
         ]
         
-        stats_table = Table(stats_data)
+        stats_table = Table(stats_data, colWidths=[doc.width/4]*4)
         stats_table.setStyle(TableStyle([
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, -1), 11),
+            ('FONTSIZE', (0, 0), (-1, -1), 12),
             ('GRID', (0, 0), (-1, -1), 1, colors.black),
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-            ('BACKGROUND', (0, 0), (-1, 0), colors.grey)
+            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+            ('PADDING', (0, 0), (-1, -1), 8),
         ]))
         elements.append(stats_table)
-        elements.append(Spacer(1, 20))
+        elements.append(Spacer(1, 30))
 
-        # Add measurements table using averaged measurements
+        # Measurements table with improved formatting
         table_data = [['Date', 'Time', 'Systolic', 'Diastolic', 'BPM']]
         for m in averaged_measurements:
             table_data.append([
@@ -394,13 +407,16 @@ def generate_pdf_report(user_id):
                 str(m.bpm)
             ])
         
-        measurements_table = Table(table_data)
+        measurements_table = Table(table_data, colWidths=[doc.width/5]*5)
         measurements_table.setStyle(TableStyle([
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
             ('FONTSIZE', (0, 0), (-1, -1), 11),
             ('GRID', (0, 0), (-1, -1), 1, colors.black),
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-            ('BACKGROUND', (0, 0), (-1, 0), colors.grey)
+            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+            ('PADDING', (0, 0), (-1, -1), 6),
+            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey]),
         ]))
         elements.append(measurements_table)
 
@@ -409,11 +425,11 @@ def generate_pdf_report(user_id):
         
         return send_file(
             buffer,
-            download_name=f'blood_pressure_report_{start_date.strftime("%Y%m%d")}_{end_date.strftime("%Y%m%d")}.pdf',
+            download_name=f'BP_Report_{user.last_name}_{start_date.strftime("%Y%m%d")}_{end_date.strftime("%Y%m%d")}.pdf',
             mimetype='application/pdf'
         )
     except Exception as e:
-        print(f"Error generating PDF: {str(e)}")  # For development
+        print(f"Error generating PDF: {str(e)}")
         return jsonify({'error': 'Failed to generate PDF report'}), 500
 
 def calculate_stats(measurements):
