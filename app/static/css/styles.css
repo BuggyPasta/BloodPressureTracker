@@ -356,6 +356,7 @@ input[type="password"]:focus {
     height: 24px;
     vertical-align: middle;
     margin-left: 0.5rem;
+    fill: #333333;
 }
 
 /* Footer Styles */

@@ -151,6 +151,11 @@
     filter: brightness(1.2);
 }
 
+/* Dark Mode SVG SMILEYS Icon Adjustments */
+[data-theme="dark"] .bp-icon {
+    fill: #e1e1e1;
+}
+
 /* Dark Mode Modal Overlay */
 [data-theme="dark"] .modal {
     background-color: var(--modal-overlay);
