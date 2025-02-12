@@ -123,13 +123,8 @@ def view_report(user_id):
     end_date = datetime.now().date()
     if report_type == 'today':
         start_date = end_date
-    elif report_type == 'last_7_days':
-        start_date = end_date - timedelta(days=6)
-    elif report_type == 'last_week':
-        end_date = end_date - timedelta(days=end_date.weekday())
-        start_date = end_date - timedelta(days=6)
-    elif report_type == 'last_30_days':
-        start_date = end_date - timedelta(days=29)
+    elif report_type == 'last_10_days':
+        start_date = end_date - timedelta(days=9)
     elif report_type == 'custom':
         try:
             start_date = datetime.strptime(request.args.get('start_date'), '%d/%m/%Y').date()
