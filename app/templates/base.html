@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blood Pressure Tracker</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dark-mode.css') }}" id="theme-stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+</head>
+<body data-theme="light">
+    <header>
+        <div class="header-content">
+            <div class="logo-title">
+                <img src="{{ url_for('static', filename='icons/app_logo.svg') }}" alt="App Logo" class="app-logo">
+                <h1>Blood Pressure Tracker</h1>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <div class="mode-toggle">
+            <button id="theme-toggle" class="theme-toggle-btn">
+                <img src="{{ url_for('static', filename='icons/mode_dark.svg') }}" 
+                     alt="Toggle Theme" 
+                     class="theme-icon">
+            </button>
+        </div>
+        <hr class="footer-line">
+        <div class="footer-links">
+            <span>Created by <a href="https://github.com/BuggyPasta" target="_blank">BuggyPasta</a> | 
+            <a href="https://github.com/BuggyPasta/BloodPressureTracker" target="_blank">GitHub</a></span>
+        </div>
+        <div class="disclaimer-link">
+            <button id="disclaimer-trigger" class="disclaimer-btn">Disclaimer</button>
+        </div>
+    </footer>
+
+    <div id="disclaimer-modal" class="modal">
+        <div class="modal-content">
+            <h2>Disclaimer</h2>
+            <p>This application is intended for informational and personal tracking purposes only. It is not a medical device and does not provide medical advice, diagnosis, or treatment. The information presented, including calculations and trends, MAY NOT be accurate or reliable and should NOT be used as a substitute for professional medical advice from a qualified healthcare provider.</p>
+            <p>There is absolutely NO guarantee that the calculations, averages, or any other data provided by this application are correct. Always consult with your doctor or healthcare professional regarding any questions or concerns about your health or medical condition. Do NOT rely on this application for medical decisions or emergencies.</p>
+            <p>The developer(s) of this application are not responsible for any inaccuracies, misinterpretations, or misuse of the information provided. By using this application, you acknowledge that you automatically assume full and exclusive responsibility for your health decisions and agree that the developer(s) shall not be held liable for any consequences arising from your use of this application.</p>
+            <button class="close-modal action-btn">Close</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

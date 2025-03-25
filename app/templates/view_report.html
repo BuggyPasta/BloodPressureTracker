@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="user-header centered-text">
+        <h2>Please select the date range for the Report you want to see</h2>
+        <p>Choose from pre-made ranges or use the <b>Custom range</b> button to set the desired dates yourself</p>
+    </div>
+
+    <div class="report-selection">
+        <div class="report-buttons">
+            <button class="report-btn primary-btn" onclick="loadReport('today')">
+                <div class="button-content">
+                    <span>Today</span>
+                </div>
+            </button>
+            <button class="report-btn primary-btn" onclick="loadReport('last_10_days')">
+                <div class="button-content">
+                    <span>Last 10 days</span>
+                </div>
+            </button>
+            <button class="report-btn primary-btn" onclick="showDateRangeModal()">
+                <div class="button-content">
+                    <span>Custom range</span>
+                </div>
+            </button>
+        </div>
+    </div>
+
+    {% if measurements %}
+        <div class="report-container">
+            <h2>Blood Pressure History for the period {{ start_date.strftime('%d/%m/%Y') }} to {{ end_date.strftime('%d/%m/%Y') }}</h2>
+            
+            <div class="patient-info centered-text">
+                <p>{{ user.first_name }} {{ user.last_name }}</p>
+                <p>DOB: {{ user.date_of_birth.strftime('%d %B %Y') }}</p>
+                <p>Age: {{ user.get_age() }} years</p>
+            </div>
+
+            <div class="stats-container">
+                <div class="stat-group">
+                    <h3>Systolic (mm Hg)</h3>
+                    <p>Min: {{ stats.systolic.min }}</p>
+                    <p>Max: {{ stats.systolic.max }}</p>
+                    <p class="with-icon">
+                        Avg: {{ stats.systolic.avg }}
+                        <img src="{{ url_for('static', filename='icons/' + get_bp_icon('systolic', stats.systolic.avg)) }}" 
+                             alt="Blood pressure status" 
+                             class="bp-icon">
+                    </p>
+                </div>
+
+                <div class="stat-group">
+                    <h3>Diastolic (mm Hg)</h3>
+                    <p>Min: {{ stats.diastolic.min }}</p>
+                    <p>Max: {{ stats.diastolic.max }}</p>
+                    <p class="with-icon">
+                        Avg: {{ stats.diastolic.avg }}
+                        <img src="{{ url_for('static', filename='icons/' + get_bp_icon('diastolic', stats.diastolic.avg)) }}" 
+                             alt="Blood pressure status" 
+                             class="bp-icon">
+                    </p>
+                </div>
+
+                <div class="stat-group">
+                    <h3>Heart Rate (BPM)</h3>
+                    <p>Min: {{ stats.bpm.min }}</p>
+                    <p>Max: {{ stats.bpm.max }}</p>
+                    <p>Avg: {{ stats.bpm.avg }}</p>
+                </div>
+            </div>
+
+            <div class="report-print-container">
+                <button onclick="printReport()" class="action-btn primary-btn full-width">
+                    <div class="button-content">
+                        <img src="{{ url_for('static', filename='icons/print.svg') }}" alt="Print">
+                        <span>Print Report</span>
+                    </div>
+                </button>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Date Range Modal -->
+    <div id="dateRangeModal" class="modal">
+        <div class="modal-content">
+            <h2>Select Date Range</h2>
+            <div class="date-inputs">
+                <div class="input-group">
+                    <label for="startDate">Start Date:</label>
+                    <input type="text" id="startDate" placeholder="DD/MM/YYYY">
+                </div>
+                <div class="input-group">
+                    <label for="endDate">End Date:</label>
+                    <input type="text" id="endDate" placeholder="DD/MM/YYYY">
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button onclick="applyDateRange()" class="action-btn primary-btn">
+                    <div class="button-content">
+                        <span>Apply</span>
+                    </div>
+                </button>
+                <button onclick="closeDateRangeModal()" class="action-btn secondary-btn">
+                    <div class="button-content">
+                        <span>Cancel</span>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- No Data Modal -->
+    <div id="noDataModal" class="modal">
+        <div class="modal-content">
+            <p>No data found for the chosen period</p>
+            <button onclick="closeNoDataModal()" class="action-btn primary-btn">
+                <div class="button-content">
+                    <span>OK</span>
+                </div>
+            </button>
+        </div>
+    </div>
+
+    <!-- Hidden form for PDF generation -->
+    <form id="pdfForm" action="{{ url_for('main.generate_pdf_report', user_id=user.id) }}" method="POST" target="_blank" style="display: none;">
+        <input type="hidden" name="start_date" id="pdfStartDate">
+        <input type="hidden" name="end_date" id="pdfEndDate">
+    </form>
+
+    <div class="action-buttons">
+        <button onclick="window.location.href='{{ url_for('main.user_dashboard', user_id=user.id) }}'" class="action-btn primary-btn">
+            <div class="button-content">
+                <img src="{{ url_for('static', filename='icons/user.svg') }}" alt="Dashboard">
+                <span>Back to your Dashboard</span>
+            </div>
+        </button>
+        <button onclick="window.location.href='{{ url_for('main.home') }}'" class="action-btn secondary-btn">
+            <div class="button-content">
+                <img src="{{ url_for('static', filename='icons/home.svg') }}" alt="Home">
+                <span>Back to Home</span>
+            </div>
+        </button>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}

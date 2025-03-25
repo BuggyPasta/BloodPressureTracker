@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="register-container">
+        <div id="alertContainer" class="alert-container"></div>
+        <form id="registrationForm" class="form-container">
+            <div class="form-group">
+                <label for="first_name">First Name:</label>
+                <input type="text" id="first_name" name="first_name" maxlength="20" required>
+            </div>
+
+            <div class="form-group">
+                <label for="last_name">Last Name:</label>
+                <input type="text" id="last_name" name="last_name" maxlength="20" required>
+            </div>
+
+            <div class="form-group">
+                <label for="date_of_birth">Date of Birth:</label>
+                <input type="text" id="date_of_birth" name="date_of_birth" placeholder="DD/MM/YYYY" required>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="action-btn">Register</button>
+                <button type="button" onclick="window.location.href='/'" class="action-btn">Cancel</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}

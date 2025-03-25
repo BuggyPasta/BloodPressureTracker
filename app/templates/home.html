@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% if users %}
+        <h2>Registered users</h2>
+        <div class="user-buttons-grid">
+            {% for user in users %}
+                <button class="user-button action-btn" onclick="window.location.href='{{ url_for('main.user_dashboard', user_id=user.id) }}'">
+                    <div class="button-content">
+                        <img src="{{ url_for('static', filename='icons/sign_in.svg') }}" alt="Sign In">
+                        <span class="user-name"><strong>{{ user.first_name }} {{ user.last_name }}</strong></span>
+                        <span class="user-details">DOB: {{ user.date_of_birth.strftime('%d/%m/%Y') }}</span>
+                        <span class="user-details">Age: {{ user.get_age() }} years</span>
+                    </div>
+                </button>
+            {% endfor %}
+        </div>
+        <hr class="section-divider">
+    {% endif %}
+
+    <div class="action-buttons">
+        <button onclick="window.location.href='{{ url_for('main.register') }}'" class="action-btn">
+            <div class="button-content">
+                <img src="{{ url_for('static', filename='icons/user_register.svg') }}" alt="Register">
+                <span>Register a new user</span>
+            </div>
+        </button>
+        <button onclick="window.close()" class="action-btn">
+            <div class="button-content">
+                <img src="{{ url_for('static', filename='icons/exit.svg') }}" alt="Exit">
+                <span>Exit the app</span>
+            </div>
+        </button>
+    </div>
+{% endblock %}

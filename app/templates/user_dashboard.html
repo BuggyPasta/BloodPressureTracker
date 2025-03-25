@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="user-header centered-text">
+        <h2>{{ user.first_name }} {{ user.last_name }}</h2>
+        <p>Date of Birth: {{ user.date_of_birth.strftime('%d/%m/%Y') }}</p>
+        <p>Age: {{ user.get_age() }} years</p>
+    </div>
+
+    <div class="action-buttons">
+        <button onclick="window.location.href='{{ url_for('main.add_measurements', user_id=user.id) }}'" class="action-btn primary-btn">
+            <div class="button-content">
+                <img src="{{ url_for('static', filename='icons/measurements.svg') }}" alt="Add">
+                <span>Add Measurements</span>
+            </div>
+        </button>
+        
+        <button onclick="window.location.href='{{ url_for('main.view_report', user_id=user.id) }}'" class="action-btn primary-btn">
+            <div class="button-content">
+                <img src="{{ url_for('static', filename='icons/report.svg') }}" alt="Report">
+                <span>View Report</span>
+            </div>
+        </button>
+        
+        <button onclick="window.location.href='{{ url_for('main.export_csv', user_id=user.id) }}'" class="action-btn primary-btn">
+            <div class="button-content">
+                <img src="{{ url_for('static', filename='icons/csv_export.svg') }}" alt="Export">
+                <span>Export to CSV</span>
+            </div>
+        </button>
+        
+        <button onclick="document.getElementById('csv-upload').click()" class="action-btn primary-btn">
+            <div class="button-content">
+                <img src="{{ url_for('static', filename='icons/csv_import.svg') }}" alt="Import">
+                <span>Import from CSV</span>
+            </div>
+        </button>
+        <input type="file" id="csv-upload" accept=".csv" style="display: none;">
+        
+        <button onclick="confirmDelete({{ user.id }})" class="action-btn delete-btn">
+            <div class="button-content">
+                <img src="{{ url_for('static', filename='icons/user_delete.svg') }}" alt="Delete">
+                <span>Delete User</span>
+            </div>
+        </button>
+        
+        <button onclick="window.location.href='{{ url_for('main.home') }}'" class="action-btn secondary-btn">
+            <div class="button-content">
+                <img src="{{ url_for('static', filename='icons/home.svg') }}" alt="Home">
+                <span>Back to Home</span>
+            </div>
+        </button>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="modal">
+        <div class="modal-content">
+            <h2>Are you sure?</h2>
+            <p>Deleting this user will PERMANENTLY remove ALL their previous blood pressure measurements and this is a non-reversible action.</p>
+            <div class="modal-buttons">
+                <button onclick="proceedWithDelete()" class="action-btn delete-btn">
+                    <div class="button-content">
+                        <span>I understand, go ahead and delete this user and all of their measurements permanently</span>
+                    </div>
+                </button>
+                <button onclick="closeDeleteModal()" class="action-btn secondary-btn">
+                    <div class="button-content">
+                        <span>No, that was a mistake, I want to keep this user, do not delete anything</span>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Final Delete Confirmation Modal -->
+    <div id="delete-confirmation-modal" class="modal">
+        <div class="modal-content">
+            <h2>Final Confirmation</h2>
+            <p>To confirm deletion, please type DELETE in the box below:</p>
+            <input type="text" id="delete-confirmation-input" placeholder="Type DELETE here">
+            <div class="modal-buttons">
+                <button onclick="finalizeDelete({{ user.id }})" class="action-btn delete-btn">
+                    <div class="button-content">
+                        <span>Confirm Deletion</span>
+                    </div>
+                </button>
+                <button onclick="closeDeleteConfirmationModal()" class="action-btn secondary-btn">
+                    <div class="button-content">
+                        <span>Cancel</span>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CSV Upload Error Modal -->
+    <div id="csv-error-modal" class="modal">
+        <div class="modal-content">
+            <h2>Upload Error</h2>
+            <p id="csv-error-message"></p>
+            <button onclick="document.getElementById('csv-error-modal').style.display='none'" class="action-btn">
+                <div class="button-content">
+                    <span>OK</span>
+                </div>
+            </button>
+        </div>
+    </div>
+
+    <!-- CSV Success Modal -->
+    <div id="csv-success-modal" class="modal">
+        <div class="modal-content">
+            <h2>Success</h2>
+            <p id="csv-success-message"></p>
+            <button onclick="document.getElementById('csv-success-modal').style.display='none'" class="action-btn">
+                <div class="button-content">
+                    <span>OK</span>
+                </div>
+            </button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}

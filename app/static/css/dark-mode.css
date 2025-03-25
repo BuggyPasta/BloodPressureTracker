@@ -1,0 +1,192 @@
+/* Dark Mode Theme Variables */
+[data-theme="dark"] {
+    --primary-color: #2CA9BC;
+    --primary-color-dark: #3dbfd3;
+    --error-color: #ff4b5c;
+    --success-color: #39c25f;
+    --warning-color: #ffd23f;
+    --text-color: #e1e1e1;
+    --background-color: #1a1a1a;
+    --card-background: #2d2d2d;
+    --border-color: #404040;
+    --modal-overlay: rgba(0, 0, 0, 0.7);
+    --shadow-color: rgba(0, 0, 0, 0.3);
+}
+
+/* Dark Mode Specific Styles */
+[data-theme="dark"] body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+[data-theme="dark"] header {
+    background-color: var(--background-color);
+    box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+[data-theme="dark"] .logo-title h1 {
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .action-btn {
+    background-color: var(--primary-color);
+}
+
+[data-theme="dark"] .action-btn:hover {
+    background-color: var(--primary-color-dark);
+}
+
+[data-theme="dark"] .delete-btn {
+    background-color: var(--error-color);
+}
+
+[data-theme="dark"] .delete-btn:hover {
+    background-color: #ff6b7a;
+}
+
+[data-theme="dark"] input[type="text"],
+[data-theme="dark"] input[type="number"],
+[data-theme="dark"] input[type="password"] {
+    background-color: var(--card-background);
+    border-color: var(--border-color);
+    color: var(--text-color);
+}
+
+[data-theme="dark"] input[type="text"]:focus,
+[data-theme="dark"] input[type="number"]:focus,
+[data-theme="dark"] input[type="password"]:focus {
+    border-color: var(--primary-color);
+}
+
+[data-theme="dark"] .modal-content {
+    background-color: var(--card-background);
+    box-shadow: 0 4px 6px var(--shadow-color);
+}
+
+[data-theme="dark"] #disclaimer-modal .modal-content {
+    font-size: 0.95rem;
+}
+
+[data-theme="dark"] .modal-buttons {
+    background-color: var(--card-background);
+}
+
+[data-theme="dark"] .measurement-group {
+    background-color: var(--card-background);
+}
+
+[data-theme="dark"] .unit {
+    color: #999;
+}
+
+[data-theme="dark"] .report-btn {
+    background-color: var(--primary-color);
+}
+
+[data-theme="dark"] .report-btn:hover {
+    background-color: var(--primary-color-dark);
+}
+
+[data-theme="dark"] .stat-group {
+    background-color: var(--card-background);
+}
+
+[data-theme="dark"] footer {
+    background-color: var(--background-color);
+}
+
+[data-theme="dark"] .footer-line {
+    background-color: var(--border-color);
+}
+
+[data-theme="dark"] .footer-links a {
+    color: var(--primary-color);
+}
+
+[data-theme="dark"] .disclaimer-btn {
+    color: var(--primary-color);
+}
+
+[data-theme="dark"] .theme-toggle-btn {
+    color: var(--text-color);
+}
+
+/* Dark Mode Chart Styles */
+[data-theme="dark"] .chart-container canvas {
+    filter: brightness(0.8) contrast(1.2);
+}
+
+/* Dark Mode Flatpickr Overrides */
+[data-theme="dark"] .flatpickr-calendar {
+    background-color: var(--card-background);
+    box-shadow: 0 4px 6px var(--shadow-color);
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .flatpickr-months,
+[data-theme="dark"] .flatpickr-weekdays {
+    background-color: var(--card-background);
+}
+
+[data-theme="dark"] .flatpickr-day {
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .flatpickr-day.selected {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+[data-theme="dark"] .flatpickr-day:hover {
+    background-color: var(--primary-color-dark);
+}
+
+[data-theme="dark"] .flatpickr-day.disabled {
+    color: var(--border-color);
+}
+
+/* Dark Mode SVG Icon Adjustments */
+[data-theme="dark"] .action-btn img,
+[data-theme="dark"] .report-btn img {
+    filter: brightness(1.2);
+}
+
+/* Dark Mode Modal Overlay */
+[data-theme="dark"] .modal {
+    background-color: var(--modal-overlay);
+}
+
+/* Dark Mode Placeholder Text */
+[data-theme="dark"] input::placeholder {
+    color: #888;
+}
+
+/* Dark Mode Selection */
+[data-theme="dark"] ::selection {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Dark Mode Scrollbar */
+[data-theme="dark"] ::-webkit-scrollbar {
+    width: 12px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-track {
+    background: var(--background-color);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background-color: var(--border-color);
+    border-radius: 6px;
+    border: 3px solid var(--background-color);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--primary-color);
+}
+
+/* Dark Mode Section Divider */
+[data-theme="dark"] .section-divider {
+    background-color: var(--border-color);
+}

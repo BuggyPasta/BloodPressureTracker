@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  bloodpressuretracker:
+    container_name: bloodpressuretracker
+    build:
+      context: https://github.com/BuggyPasta/BloodPressureTracker.git
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - /home/YOUR_USER_FOLDER/bloodpressuretracker/data:/app/data
+      - /home/YOUR_USER_FOLDER/bloodpressuretracker/config:/app/config
+      - /home/YOUR_USER_FOLDER/bloodpressuretracker/db:/app/db
+    restart: unless-stopped
+    labels:
+      - "com.centurylinklabs.watchtower.enable=false"

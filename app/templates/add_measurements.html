@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form id="measurements-form" class="measurements-container">
+        {% for i in range(1, 4) %}
+        <div class="measurement-group">
+            <h3><center>Measurement {{ i }}</center></h3>
+            <div class="measurement-inputs">
+                <div class="input-group">
+                    <label for="systolic_{{ i }}">Systolic:</label>
+                    <div class="input-with-unit">
+                        <input 
+                            type="number" 
+                            inputmode="numeric" 
+                            pattern="[0-9]*" 
+                            id="systolic_{{ i }}" 
+                            name="systolic_{{ i }}" 
+                            min="30" 
+                            max="230" 
+                            required
+                        >
+                        <span class="unit">mm Hg</span>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="diastolic_{{ i }}">Diastolic:</label>
+                    <div class="input-with-unit">
+                        <input 
+                            type="number" 
+                            inputmode="numeric" 
+                            pattern="[0-9]*" 
+                            id="diastolic_{{ i }}" 
+                            name="diastolic_{{ i }}" 
+                            min="30" 
+                            max="230" 
+                            required
+                        >
+                        <span class="unit">mm Hg</span>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="bpm_{{ i }}">Heart Rate:</label>
+                    <div class="input-with-unit">
+                        <input 
+                            type="number" 
+                            inputmode="numeric" 
+                            pattern="[0-9]*" 
+                            id="bpm_{{ i }}" 
+                            name="bpm_{{ i }}" 
+                            min="30" 
+                            max="230" 
+                            required
+                        >
+                        <span class="unit">BPM</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- Message to double-check entries -->
+        <div class="confirmation-message">
+            <p><strong>Please double-check all above entries carefully before saving. Once you save these measurements, you will NOT be able to edit or delete them. Take your time to ensure you added everything correctly.</strong></p>
+        </div>
+
+        <div class="action-buttons">
+            <button type="submit" class="action-btn primary-btn">
+                <div class="button-content">
+                    <img src="{{ url_for('static', filename='icons/icon_ok.svg') }}" alt="Save">
+                    <span>Save Measurements</span>
+                </div>
+            </button>
+            <button type="button" class="action-btn secondary-btn" onclick="confirmCancel()">
+                <div class="button-content">
+                    <img src="{{ url_for('static', filename='icons/icon_x.svg') }}" alt="Cancel">
+                    <span>Cancel</span>
+                </div>
+            </button>
+        </div>
+    </form>
+
+    <!-- Cancel Confirmation Modal -->
+    <div id="cancel-modal" class="modal">
+        <div class="modal-content">
+            <h2>Cancel saving these Measurements?</h2>
+            <p>Are you sure you want to cancel? If any measurements were entered, they will all be lost!</p>
+            <div class="modal-buttons">
+                <button onclick="window.location.href='{{ url_for('main.user_dashboard', user_id=user.id) }}'" class="action-btn">
+                    <div class="button-content">
+                        <span>Yes, cancel these measurements</span>
+                    </div>
+                </button>
+                <button onclick="closeCancelModal()" class="action-btn secondary-btn">
+                    <div class="button-content">
+                        <span>No, continue entering measurements</span>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}
